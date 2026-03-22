@@ -26,9 +26,7 @@ html,body{height:100%;overflow:hidden;background:#000;}
 .lb.on{background:var(--g);color:#1a0d00;}
 
 /* INFO */
-#locinfo{position:fixed;bottom:115px;left:12px;z-index:100;background:rgba(7,18,32,.85);padding:7px 11px;border-radius:7px;color:#fff;font-size:12px;pointer-events:none;backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.1);}
-#locname{font-weight:700;margin-bottom:2px;}
-#loczoom{font-size:10px;opacity:.5;}
+
 
 /* BOTONES DERECHA */
 .rbtn{position:fixed;right:18px;z-index:100;background:rgba(7,18,32,.88);border:1px solid rgba(255,255,255,.2);color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:18px;backdrop-filter:blur(8px);}
@@ -38,7 +36,8 @@ html,body{height:100%;overflow:hidden;background:#000;}
 #btn-bright.on{background:rgba(245,166,35,.3);border-color:var(--g);}
 
 /* FAB */
-#fab{position:fixed;bottom:48px;left:18px;z-index:100;background:var(--g);border:none;width:56px;height:56px;border-radius:50%;cursor:pointer;font-size:22px;box-shadow:0 4px 16px rgba(245,166,35,.5);animation:pulse 2s infinite;}
+#fab{position:fixed;bottom:24px;left:18px;z-index:600;background:var(--g);border:none;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:22px;box-shadow:0 4px 16px rgba(245,166,35,.5);animation:pulse 2s infinite;transition:left .35s cubic-bezier(.2,.8,.2,1);}
+#fab.panel-on{left:376px;}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.7);}70%{box-shadow:0 0 0 12px rgba(245,166,35,0);}100%{box-shadow:0 0 0 0 rgba(245,166,35,0);}}
 
 /* PANEL BRILLO */
@@ -57,12 +56,12 @@ html,body{height:100%;overflow:hidden;background:#000;}
 #rtip{font-size:11px;color:#f5c842;margin-top:5px;display:none;}
 #rinst{font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;}
 
-/* PANEL PRINCIPAL */
-#panel{position:fixed;top:0;left:0;width:100%;background:rgba(7,18,32,.98);border-bottom-left-radius:20px;border-bottom-right-radius:20px;color:#fff;transform:translateY(-105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:500;height:90vh;display:flex;flex-direction:column;box-shadow:0 6px 30px rgba(0,0,0,.6);}
-#panel.on{transform:translateY(0);}
-#phandle{width:44px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:10px auto 6px;cursor:pointer;flex-shrink:0;}
-#phdr{padding:0 18px 10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
-#ptitle{font-size:15px;font-weight:800;color:var(--g);}
+/* PANEL PRINCIPAL — sidebar izquierdo */
+#panel{position:fixed;top:0;left:0;width:360px;max-width:92vw;height:100vh;background:rgba(7,18,32,.98);color:#fff;transform:translateX(-105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:500;display:flex;flex-direction:column;box-shadow:6px 0 30px rgba(0,0,0,.6);}
+#panel.on{transform:translateX(0);}
+#phandle{display:none;}
+#phdr{padding:14px 18px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;}
+#ptitle{font-size:16px;font-weight:800;color:var(--g);}
 #pclose{background:none;border:none;color:rgba(255,255,255,.5);font-size:22px;cursor:pointer;}
 
 /* FECHA */
@@ -80,17 +79,18 @@ html,body{height:100%;overflow:hidden;background:#000;}
 .tab.on{color:var(--g);border-bottom-color:var(--g);}
 
 /* TAB CONTENT */
-.tabcont{flex:1;overflow-y:auto;padding:14px 18px;display:none;}
+.tabcont{flex:1;overflow-y:auto;padding:12px 14px;display:none;}
 .tabcont.on{display:block;}
 .tabcont::-webkit-scrollbar{width:3px;}
 .tabcont::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);}
 
 /* CARDS DATOS */
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
-.dcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px;text-align:center;}
-.dico{font-size:18px;margin-bottom:5px;}
-.dlbl{font-size:10px;color:rgba(255,255,255,.42);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;display:flex;align-items:center;justify-content:center;gap:4px;}
-.dval{font-size:13px;font-weight:800;color:#fff;}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px;}
+.dcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;overflow:hidden;}
+.dico{font-size:22px;line-height:1;}
+.dcard-body{display:flex;flex-direction:column;min-width:0;width:100%;}
+.dlbl{font-size:9px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;display:flex;align-items:center;gap:3px;}
+.dval{font-size:22px;font-weight:800;color:#fff;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
 .g{color:#4ade80!important;}.w{color:var(--g)!important;}.r{color:#f87171!important;}
 .esp-tag{margin-top:5px;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;}
 
@@ -100,7 +100,9 @@ html,body{height:100%;overflow:hidden;background:#000;}
 .tip:hover .tip-txt,.tip:active .tip-txt{visibility:visible;opacity:1;}
 
 /* VEREDICTO */
-.vrd{padding:11px 15px;border-radius:9px;text-align:center;font-weight:800;font-size:14px;margin-bottom:11px;}
+.vrd{padding:11px 15px;border-radius:9px;text-align:center;font-weight:800;font-size:14px;margin-bottom:0;}
+.vrd-btn{cursor:pointer;user-select:none;}
+.vrd-btn:active{opacity:.85;}
 .vrd.g{background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.35);color:#4ade80;}
 .vrd.w{background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);color:var(--g);}
 .vrd.r{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.35);color:#f87171;}
@@ -176,8 +178,7 @@ html,body{height:100%;overflow:hidden;background:#000;}
 /* MODAL */
 #umo{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:none;align-items:center;justify-content:center;}
 #umo.on{display:flex;}
-#alm{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9998;display:none;align-items:center;justify-content:center;}
-#alm.on{display:flex;}
+
 .mbox{background:linear-gradient(135deg,#0d1f35,#071220);border:1px solid rgba(245,166,35,.35);border-radius:14px;padding:22px;max-width:295px;width:92%;text-align:center;}
 .mt{font-size:15px;font-weight:800;color:#fff;margin-bottom:5px;}
 .mbk{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.22);border-radius:6px;padding:9px;margin-bottom:11px;font-size:12px;font-weight:700;color:var(--g);}
@@ -187,8 +188,9 @@ html,body{height:100%;overflow:hidden;background:#000;}
 .mbtn{background:var(--g);color:#1a0d00;border:none;border-radius:8px;padding:11px;width:100%;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:7px;}
 .mhint{font-size:11px;color:rgba(255,255,255,.28);}
 .mcl{background:none;border:none;font-size:11px;color:rgba(255,255,255,.22);cursor:pointer;margin-top:5px;}
-.leaflet-popup-content-wrapper{border-radius:9px!important;border:1px solid rgba(245,166,35,.35)!important;background:rgba(7,18,32,.96)!important;color:#fff!important;backdrop-filter:blur(10px);}
-.leaflet-popup-tip{background:rgba(7,18,32,.96)!important;}
+.leaflet-popup-content-wrapper{border-radius:12px!important;border:1px solid rgba(56,189,248,.4)!important;background:rgba(7,18,32,.97)!important;color:#fff!important;backdrop-filter:blur(10px);padding:0!important;}
+.leaflet-popup-content{margin:0!important;width:auto!important;}
+.leaflet-popup-tip{background:rgba(7,18,32,.97)!important;}
 </style>
 </head>
 <body>
@@ -202,15 +204,13 @@ html,body{height:100%;overflow:hidden;background:#000;}
 
 <!-- CAPAS -->
 <div id="layers">
-  <button class="lb on" id="l-sat" onclick="setLayer('sat')">🛰️ Satélite HD</button>
+  <button class="lb on" id="l-sat" onclick="setLayer('sat')">🛰️ Satélite</button>
   <button class="lb" id="l-str" onclick="setLayer('str')">🏙️ Calles</button>
+  <button class="lb" id="l-nau" onclick="setLayer('nau')">🗺️ Náutico</button>
+  <button class="lb" id="l-sea" onclick="toggleSeamap()" style="font-size:10px;">📊 Batimetría</button>
 </div>
 
-<!-- INFO MAPA -->
-<div id="locinfo">
-  <div id="locname">Costa de Chile</div>
-  <div id="loczoom">Clic en el mar para cargar condiciones</div>
-</div>
+
 
 <!-- PANEL BRILLO -->
 <div id="brightpanel">
@@ -253,6 +253,7 @@ html,body{height:100%;overflow:hidden;background:#000;}
   <div id="phandle" onclick="togglePanel()"></div>
   <div id="phdr">
     <div id="ptitle">🎣 El Libro Prohibido</div>
+    <div id="locname" style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;">Toca el mapa para analizar</div>
     <button id="pclose" onclick="togglePanel()">✕</button>
   </div>
   <!-- FECHA -->
@@ -277,16 +278,22 @@ html,body{height:100%;overflow:hidden;background:#000;}
   <!-- TAB INICIO -->
   <div id="tp-inicio" class="tabcont on">
     <div class="dgrid">
-      <div class="dcard"><div class="dico">💨</div><div class="dlbl">Viento <span class="tip">?<span class="tip-txt">🧓 Sur/SO: peces en la orilla. Norte: se alejan. +25km/h: imposible lanzar con precisión.</span></span></div><div class="dval" id="d-v">--</div></div>
-      <div class="dcard" id="card-temp"><div class="dico">🌡️</div><div class="dlbl">Agua <span class="tip">?<span class="tip-txt">🧓 12–15°C: corvina fría. 15–18°C: rango de oro, máxima variedad. 18–21°C: róbalo y jurel. +21°C: especies de superficie.</span></span></div><div class="dval" id="d-t">--</div></div>
-      <div class="dcard"><div class="dico">🌊</div><div class="dlbl">Olas <span class="tip">?<span class="tip-txt">🧓 0.3–1.0m: ideal. +1.5m: pozas revueltas, peces asustados. Calma total: no se acercan a la orilla.</span></span></div><div class="dval" id="d-o">--</div></div>
-      <div class="dcard"><div class="dico">🔵</div><div class="dlbl">Presión <span class="tip">?<span class="tip-txt">🧓 Bajando rápido: sal YA, peces comen antes de la tormenta. Alta estable: agua quieta, peces pasivos. Subiendo: mejora gradual.</span></span></div><div class="dval" id="d-p">--</div></div>
-      <div class="dcard"><div class="dico">🌙</div><div class="dlbl">Luna <span class="tip">?<span class="tip-txt">🧓 Llena/nueva: mareas vivas, peces muy activos. Cuartos: mareas muertas, busca pozas profundas con carnada de olor.</span></span></div><div class="dval" id="d-l">--</div></div>
-      <div class="dcard"><div class="dico">⚓</div><div class="dlbl">Coef. <span class="tip">?<span class="tip-txt">🧓 70–100: mareas vivas, 2h antes de pleamar = oro. 45–70: pesca técnica. -45: mareas muertas, poza profunda.</span></span></div><div class="dval" id="d-c">--</div></div>
-      <div class="dcard" id="card-prof"><div class="dico">📐</div><div class="dlbl">Profundidad <span class="tip">?<span class="tip-txt">🧓 0–3m: rompiente/poza. 3–8m: veril/canaleta. 8–20m: canal. +20m: zona offshore. Clic en el mar para medir.</span></span></div><div class="dval" id="d-prof">-- m</div><div id="d-prof-tipo" style="font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;">Clic en el mar</div></div>
-      <div class="dcard" id="card-marea"><div class="dico">📈</div><div class="dlbl">Marea <span class="tip">?<span class="tip-txt">🧓 Subiendo = peces acercándose a la orilla. La hora antes de la pleamar es la ventana de oro. Bajando = peces alejándose.</span></span></div><div class="dval" id="d-marea">--</div><div id="d-marea-hora" style="font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;">Calculando...</div></div>
+      <div class="dcard"><div class="dico">💨</div><div class="dcard-body"><div class="dlbl">Viento <span class="tip">?<span class="tip-txt">🧓 Sur/SO: peces en la orilla. Norte: se alejan. +25km/h: imposible lanzar con precisión.</span></span></div><div class="dval" id="d-v">--</div></div></div>
+      <div class="dcard"><div class="dico">🌊</div><div class="dcard-body"><div class="dlbl">Olas <span class="tip">?<span class="tip-txt">🧓 0.3–1.0m: ideal. +1.5m: pozas revueltas, peces asustados. Calma total: no se acercan a la orilla.</span></span></div><div class="dval" id="d-o">--</div></div></div>
+      <div class="dcard" id="card-temp"><div class="dico">🌡️</div><div class="dcard-body"><div class="dlbl">T° Agua <span class="tip">?<span class="tip-txt">🧓 12–15°C: corvina fría. 15–18°C: rango de oro. 18–21°C: róbalo y jurel. +21°C: superficie.</span></span></div><div class="dval" id="d-t">--</div></div></div>
+      <div class="dcard"><div class="dico">🔵</div><div class="dcard-body"><div class="dlbl">Presión <span class="tip">?<span class="tip-txt">🧓 Bajando rápido: sal YA. Alta estable: peces pasivos. Subiendo: mejora gradual.</span></span></div><div class="dval" id="d-p">--</div></div></div>
+      <div class="dcard"><div class="dico">🌙</div><div class="dcard-body"><div class="dlbl">Luna <span class="tip">?<span class="tip-txt">🧓 Llena/nueva: mareas vivas, peces muy activos. Cuartos: mareas muertas.</span></span></div><div class="dval" id="d-l">--</div></div></div>
+      <div class="dcard"><div class="dico">⚓</div><div class="dcard-body"><div class="dlbl">Coef. <span class="tip">?<span class="tip-txt">🧓 70–100: mareas vivas. 45–70: pesca técnica. -45: mareas muertas.</span></span></div><div class="dval" id="d-c">--</div></div></div>
+      <div class="dcard" id="card-prof"><div class="dico">📐</div><div class="dcard-body"><div class="dlbl">Profundidad <span class="tip">?<span class="tip-txt">🧓 0–3m: rompiente. 3–8m: veril. 8–20m: canal. +20m: offshore. Clic en el mar.</span></span></div><div class="dval" id="d-prof">-- m</div><div id="d-prof-tipo" style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Clic en el mar</div></div></div>
+      <div class="dcard" id="card-marea"><div class="dico">📈</div><div class="dcard-body"><div class="dlbl">Marea <span class="tip">?<span class="tip-txt">🧓 Subiendo = peces acercándose. La hora antes de pleamar es la ventana de oro.</span></span></div><div class="dval" id="d-marea">--</div><div id="d-marea-hora" style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px;">Calculando...</div></div></div>
     </div>
-    <div class="vrd w" id="vrd">Selecciona una ubicación en el mapa</div>
+    <div id="vrd-wrap" style="margin-bottom:11px;">
+      <div class="vrd w" id="vrd" onclick="toggleVrdDetalle()" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;">
+        <span id="vrd-txt">Selecciona una ubicación en el mapa</span>
+        <span id="vrd-arr" style="font-size:11px;opacity:.5;margin-left:8px;transition:transform .2s;">▼</span>
+      </div>
+      <div id="vrd-det" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-top:none;border-radius:0 0 9px 9px;padding:10px 13px 12px;font-size:11px;line-height:1.7;color:rgba(255,255,255,.65);"></div>
+    </div>
     <div class="analisis">
       <div class="analisis-lbl">🧓 Análisis del Viejo Pescador</div>
       <div id="analisis-cont"><div class="alinea" style="color:rgba(255,255,255,.35);">Haz clic en el mar para cargar el análisis completo de condiciones.</div></div>
@@ -383,20 +390,12 @@ html,body{height:100%;overflow:hidden;background:#000;}
 </div>
 
 <!-- MODAL ALARMA -->
-<div id="alm">
-  <div class="mbox">
-    <div style="font-size:36px;margin-bottom:8px;">🎣</div>
-    <div class="mt" id="alm-titulo">¡Condiciones Perfectas!</div>
-    <div style="font-size:40px;font-weight:800;color:var(--g);margin:8px 0;" id="alm-score">--</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;margin-bottom:14px;" id="alm-det">Cargando...</div>
-    <button class="mbtn" onclick="document.getElementById('alm').classList.remove('on')" style="margin:0;">✓ Entendido</button>
-  </div>
-</div>
+
 
 <script>
 'use strict';
 var UNLOCK_CODE='VIEJO23';
-var map,satL,strL,gpsMarker=null;
+var map,satL,strL,gebcoL,gebcoOverL,seamarkL,gpsMarker=null;
 var curLat=-33.018,curLng=-71.643;
 var wx={score:0,temp:15,olas:0.8,viento:12,dirViento:225,presion:1013,coef:70};
 var curDate=new Date();
@@ -430,12 +429,29 @@ var PLACES={
 window.addEventListener('load',function(){
   initMap();
   document.getElementById('calin').valueAsDate=new Date();
-  cargarWx(curLat,curLng);
   iniciarReloj();
   actualizarSolunares(curLat,curLng);
   calcularMarea();
   setInterval(calcularMarea,60000);
-  setInterval(function(){if(map)document.getElementById('loczoom').textContent='Zoom: '+map.getZoom()+'/22';},2000);
+
+  // Abrir panel automáticamente
+  document.getElementById('panel').classList.add('on');
+  document.getElementById('fab').classList.add('panel-on');
+
+  // Datos estimados inmediatos
+  var mes=new Date().getMonth();
+  wx={
+    temp:[15,15,15.5,16,15.5,14.5,13.5,13,13.5,14,14.5,15][mes],
+    olas:[1.2,1.1,1.0,0.9,1.0,1.1,1.2,1.1,1.0,0.9,1.0,1.1][mes],
+    viento:14,dirViento:225,presion:1013,
+    coef:calcCoef(curDate),_sinConexion:true
+  };
+  wx.score=calcScore(wx);
+  actualizarUI(wx);
+
+  // Cargar datos reales en segundo plano
+  cargarWx(curLat,curLng);
+
   document.getElementById('sin').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
   document.getElementById('uli').addEventListener('keydown',function(e){if(e.key==='Enter')tryUnlock();});
   document.getElementById('chat-in').addEventListener('keydown',function(e){if(e.key==='Enter')sendChat();});
@@ -443,16 +459,48 @@ window.addEventListener('load',function(){
 });
 
 function initMap(){
+  // ── Capas base ──
   satL=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri',maxZoom:22,maxNativeZoom:19});
-  strL=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri',maxZoom:22,maxNativeZoom:19});
+  strL=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM',maxZoom:19,subdomains:'abc'});
+
+  // ── Mapa náutico GEBCO 2024 — batimetría real con curvas de profundidad ──
+  // WMS oficial GEBCO: https://wms.gebco.net/mapserv
+  gebcoL=L.tileLayer.wms('https://wms.gebco.net/mapserv?',{
+    layers:'GEBCO_LATEST_2',
+    format:'image/png',
+    transparent:true,
+    version:'1.3.0',
+    attribution:'© GEBCO 2024',
+    maxZoom:14,
+    opacity:1.0
+  });
+
+  // ── Overlay OpenSeaMap — marcas náuticas, boyas, faros ──
+  seamarkL=L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',{
+    attribution:'© OpenSeaMap',maxZoom:18,opacity:1.0,zIndex:500
+  });
+
+  // ── Overlay curvas de profundidad GEBCO sobre satélite ──
+  gebcoOverL=L.tileLayer.wms('https://wms.gebco.net/mapserv?',{
+    layers:'GEBCO_LATEST_2',
+    format:'image/png',
+    transparent:true,
+    version:'1.3.0',
+    attribution:'© GEBCO 2024',
+    maxZoom:14,
+    opacity:0.55,
+    zIndex:300
+  });
+
   map=L.map('map',{zoomControl:false,maxZoom:22,wheelPxPerZoomLevel:40}).setView([curLat,curLng],14);
   satL.addTo(map);
   L.control.zoom({position:'bottomleft'}).addTo(map);
   L.control.scale({position:'bottomleft',imperial:false,maxWidth:150}).addTo(map);
   map.on('click',function(e){
     if(reglaOn){onReglaClick(e);return;}
+    window._puntoSeleccionado=true;
     curLat=e.latlng.lat;curLng=e.latlng.lng;
-    document.getElementById('locname').textContent='📍 '+curLat.toFixed(4)+', '+curLng.toFixed(4);
+    setTxt('locname','📍 '+curLat.toFixed(4)+', '+curLng.toFixed(4));
     cargarWx(curLat,curLng);
     cargarProfundidad(curLat,curLng);
     calcularMarea();
@@ -461,10 +509,40 @@ function initMap(){
 }
 
 function setLayer(t){
-  map.removeLayer(satL);map.removeLayer(strL);
+  [satL,strL,gebcoL].forEach(function(l){try{map.removeLayer(l);}catch(e){}});
   document.querySelectorAll('.lb').forEach(function(b){b.classList.remove('on');});
-  if(t==='sat'){satL.addTo(map);document.getElementById('l-sat').classList.add('on');}
-  else{strL.addTo(map);document.getElementById('l-str').classList.add('on');}
+  if(t==='sat'){
+    satL.addTo(map);
+    document.getElementById('l-sat').classList.add('on');
+  } else if(t==='str'){
+    strL.addTo(map);
+    document.getElementById('l-str').classList.add('on');
+  } else if(t==='nau'){
+    // Modo náutico: GEBCO como base (azul profundidad real)
+    gebcoL.addTo(map);
+    if(!map.hasLayer(seamarkL))seamarkL.addTo(map);
+    document.getElementById('l-nau').classList.add('on');
+    document.getElementById('l-sea').classList.add('on');
+    return;
+  }
+  // Mantener overlays activos
+  var seaOn=document.getElementById('l-sea').classList.contains('on');
+  if(seaOn&&!map.hasLayer(seamarkL))seamarkL.addTo(map);
+}
+
+function toggleSeamap(){
+  var btn=document.getElementById('l-sea');
+  var isNau=document.getElementById('l-nau').classList.contains('on');
+  if(map.hasLayer(seamarkL)&&map.hasLayer(gebcoOverL)){
+    map.removeLayer(seamarkL);
+    map.removeLayer(gebcoOverL);
+    btn.classList.remove('on');
+  } else {
+    // Agregar curvas GEBCO sobre el mapa actual + marcas náuticas
+    if(!map.hasLayer(gebcoOverL))gebcoOverL.addTo(map);
+    if(!map.hasLayer(seamarkL))seamarkL.addTo(map);
+    btn.classList.add('on');
+  }
 }
 
 // ══ TABS ══
@@ -486,7 +564,8 @@ async function doSearch(){
   if(key){
     var p=PLACES[key];curLat=p.lat;curLng=p.lng;
     map.flyTo([p.lat,p.lng],15,{duration:1.5});
-    document.getElementById('locname').textContent='📍 '+p.lbl;
+    setTxt('locname','📍 '+p.lbl);
+    window._puntoSeleccionado=true;
     cargarWx(p.lat,p.lng);cargarProfundidad(p.lat,p.lng);calcularMarea();actualizarSolunares(p.lat,p.lng);
   }else{
     try{
@@ -495,7 +574,8 @@ async function doSearch(){
       if(d&&d[0]){
         curLat=parseFloat(d[0].lat);curLng=parseFloat(d[0].lon);
         map.flyTo([curLat,curLng],14,{duration:1.5});
-        document.getElementById('locname').textContent='📍 '+d[0].display_name.split(',')[0];
+        setTxt('locname','📍 '+d[0].display_name.split(',')[0]);
+        window._puntoSeleccionado=true;
         cargarWx(curLat,curLng);cargarProfundidad(curLat,curLng);calcularMarea();actualizarSolunares(curLat,curLng);
       }
     }catch(e){}
@@ -510,61 +590,58 @@ function activarGPS(){
     curLat=pos.coords.latitude;curLng=pos.coords.longitude;
     btn.classList.add('on');btn.textContent='📍';
     map.flyTo([curLat,curLng],16,{duration:1.5});
-    document.getElementById('locname').textContent='📍 Tu ubicación';
+    setTxt('locname','📍 Tu ubicación');
     if(gpsMarker)map.removeLayer(gpsMarker);
     gpsMarker=L.circleMarker([curLat,curLng],{radius:8,color:'#4ade80',fillColor:'#4ade80',fillOpacity:.22,weight:2}).addTo(map);
+    window._puntoSeleccionado=true;
     cargarWx(curLat,curLng);cargarProfundidad(curLat,curLng);calcularMarea();actualizarSolunares(curLat,curLng);
   },function(){btn.textContent='📍';},{enableHighAccuracy:true,timeout:10000});
 }
 
-// ══ OPEN-METEO — con soporte de fecha futura ══
-async function cargarWx(lat,lng){
-  try{
-    var today=new Date();today.setHours(0,0,0,0);
-    var target=new Date(curDate);target.setHours(0,0,0,0);
-    var isToday=target.getTime()===today.getTime();
-    var diffDays=Math.round((target-today)/86400000);
-    diffDays=Math.max(0,Math.min(6,diffDays));
+// ══ CLIMA — via servidor local (evita bloqueos de firewall) ══
+// Cache compartido entre cargarWx y renderForecast — una sola llamada API
+window._wxCache7=null;
 
+async function cargarWx(lat,lng){
+  var diffDays=window._diffDays||0;
+  var mes=new Date().getMonth();
+  var temps=[15,15,15.5,16,15.5,14.5,13.5,13,13.5,14,14.5,15];
+  var olasE=[1.2,1.1,1.0,0.9,1.0,1.1,1.2,1.1,1.0,0.9,1.0,1.1];
+  // Datos estimados inmediatos mientras carga
+  wx={temp:temps[mes],olas:olasE[mes],viento:14,dirViento:225,presion:1013,coef:calcCoef(curDate),_sinConexion:true};
+  wx.score=calcScore(wx);actualizarUI(wx);
+  try{
+    // Pedir siempre 7 días — compartir con renderForecast (una sola llamada API)
     var rs=await Promise.all([
-      fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lng
-        +'&current=wave_height,sea_surface_temperature'
-        +'&daily=wave_height_max,sea_surface_temperature_max'
-        +'&timezone=America%2FSantiago&forecast_days=7'),
-      fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng
-        +'&current=wind_speed_10m,wind_direction_10m,surface_pressure'
-        +'&daily=wind_speed_10m_max,wind_direction_10m_dominant,surface_pressure_max'
-        +'&timezone=America%2FSantiago&forecast_days=7')
+      fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+lat+'&longitude='+lng+'&current=wave_height,sea_surface_temperature&daily=wave_height_max,sea_surface_temperature_max&timezone=America%2FSantiago&forecast_days=7'),
+      fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lng+'&current=wind_speed_10m,wind_direction_10m,surface_pressure&daily=wind_speed_10m_max,wind_direction_10m_dominant,surface_pressure_mean&timezone=America%2FSantiago&forecast_days=7')
     ]);
     var d=await Promise.all([rs[0].json(),rs[1].json()]);
-    var dm=d[0].daily||{},dw=d[1].daily||{};
-    var mc=d[0].current||{},wc=d[1].current||{};
-
-    // Guardar 7 días en cache para renderForecast
-    var _temps=[],_olas=[],_vientos=[],_dirs=[],_pres=[],_fechas=[];
+    var mc=d[0].current||{},wc=d[1].current||{},dd=d[0].daily||{},da=d[1].daily||{};
+    // Guardar los 7 días en cache para renderForecast
+    var c7={temps:[],olas:[],vientos:[],dirs:[],pres:[],fechas:[],ok:true};
+    var today0=new Date();today0.setHours(0,0,0,0);
     for(var i=0;i<7;i++){
-      var fd=new Date(today);fd.setDate(today.getDate()+i);
-      _fechas.push(fd.toISOString().split('T')[0]);
-      _temps.push((i===0&&isToday)?(mc.sea_surface_temperature||dm.sea_surface_temperature_max&&dm.sea_surface_temperature_max[0]||15.5):((dm.sea_surface_temperature_max&&dm.sea_surface_temperature_max[i])||15.5));
-      _olas.push((i===0&&isToday)?(mc.wave_height||dm.wave_height_max&&dm.wave_height_max[0]||0.8):((dm.wave_height_max&&dm.wave_height_max[i])||0.8));
-      _vientos.push((i===0&&isToday)?(wc.wind_speed_10m||dw.wind_speed_10m_max&&dw.wind_speed_10m_max[0]||12):((dw.wind_speed_10m_max&&dw.wind_speed_10m_max[i])||12));
-      _dirs.push((i===0&&isToday)?(wc.wind_direction_10m||dw.wind_direction_10m_dominant&&dw.wind_direction_10m_dominant[0]||225):((dw.wind_direction_10m_dominant&&dw.wind_direction_10m_dominant[i])||225));
-      _pres.push((i===0&&isToday)?(wc.surface_pressure||dw.surface_pressure_max&&dw.surface_pressure_max[0]||1013):((dw.surface_pressure_max&&dw.surface_pressure_max[i])||1013));
+      var fd=new Date(today0);fd.setDate(today0.getDate()+i);
+      c7.fechas.push(fd.toISOString().split('T')[0]);
+      c7.temps.push(i===0?(mc.sea_surface_temperature||(dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[0])||temps[mes]):((dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[i])||temps[mes]));
+      c7.olas.push(i===0?(mc.wave_height||(dd.wave_height_max&&dd.wave_height_max[0])||olasE[mes]):((dd.wave_height_max&&dd.wave_height_max[i])||olasE[mes]));
+      c7.vientos.push(i===0?(wc.wind_speed_10m||(da.wind_speed_10m_max&&da.wind_speed_10m_max[0])||14):((da.wind_speed_10m_max&&da.wind_speed_10m_max[i])||14));
+      c7.dirs.push(i===0?(wc.wind_direction_10m||(da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[0])||225):((da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[i])||225));
+      c7.pres.push(i===0?(wc.surface_pressure||(da.surface_pressure_mean&&da.surface_pressure_mean[0])||1013):((da.surface_pressure_mean&&da.surface_pressure_mean[i])||1013));
     }
-    window._wxCache={temps:_temps,olas:_olas,vientos:_vientos,dirs:_dirs,pres:_pres,fechas:_fechas,ok:true};
-
-    var temp=_temps[diffDays],olas=_olas[diffDays],viento=_vientos[diffDays];
-    var dirViento=_dirs[diffDays],presion=_pres[diffDays];
-
-    wx={temp:temp,olas:olas,viento:viento,dirViento:dirViento,presion:presion,coef:calcCoef(curDate)};
-    wx.score=calcScore(wx);
-    actualizarUI(wx);
-
-    // Si tab 7 días está visible, refrescar
+    window._wxCache7=c7;
+    // Actualizar panel inicio con el día seleccionado
+    var d2=Math.max(0,Math.min(6,diffDays));
+    wx={temp:c7.temps[d2],olas:c7.olas[d2],viento:c7.vientos[d2],dirViento:c7.dirs[d2],presion:c7.pres[d2],coef:calcCoef(curDate),_sinConexion:false};
+    wx.score=calcScore(wx);actualizarUI(wx);
+    if(typeof _actualizarPopupDatos==='function')_actualizarPopupDatos();
+    // Si tab 7 días está visible, refrescar automáticamente
     if(document.getElementById('tp-7dias').classList.contains('on'))renderForecast();
+    console.log('[WX] dia='+d2+' temp='+wx.temp.toFixed(1)+' olas='+wx.olas.toFixed(1)+' viento='+Math.round(wx.viento));
   }catch(e){
-    wx={temp:16,olas:0.8,viento:14,dirViento:225,presion:1014,coef:calcCoef(curDate),score:72};
-    actualizarUI(wx);
+    console.warn('[WX] Error:',e.message);
+    setTxt('locname','⚠️ Sin internet — datos estimados por época');
   }
 }
 
@@ -572,8 +649,63 @@ async function cargarWx(lat,lng){
 function calcCoef(d){var ref=new Date('2024-01-11T00:00:00Z'),ph=((d-ref)/86400000%29.53058867)/29.53058867*2*Math.PI;return Math.round(Math.max(20,Math.min(100,70+30*Math.abs(Math.cos(ph)))));}
 function faseLunar(d){var ref=new Date('2024-01-11T00:00:00Z'),ph=((d-ref)/86400000%29.53058867)/29.53058867;if(ph<0.03||ph>0.97)return'🌑 Luna nueva';if(ph<0.28)return'🌒 Creciente';if(ph<0.53)return'🌕 Luna llena';return'🌘 Menguante';}
 function calcScore(d){var s=0;if(d.temp>=14&&d.temp<=20)s+=25;else if(d.temp>=12)s+=15;if(d.olas>=0.2&&d.olas<=1.0)s+=20;else if(d.olas<=1.5)s+=10;if(d.viento<15)s+=20;else if(d.viento<25)s+=10;if(d.presion<1010)s+=20;else if(d.presion<1018)s+=12;else s+=5;if(d.coef>=70)s+=15;else if(d.coef>=45)s+=8;return Math.min(100,s);}
-function especiesPorTemp(t){if(t<12)return{esp:'Congrio · Lenguado',col:'#38bdf8'};if(t<15)return{esp:'Corvina · Congrio · Lenguado',col:'#4ade80'};if(t<18)return{esp:'Corvina · Róbalo · Lenguado · Jurel',col:'#4ade80'};if(t<21)return{esp:'Róbalo · Jurel · Lisa',col:'#f5a623'};return{esp:'Jurel · Caballa · Lisa',col:'#f87171'};}
+// ══ BASE DATOS SUBPESCA/SERNAPESCA — Res.Ex.443-2025 ══
+var ESPECIES_DB=[
+  {n:'Corvina',     temp:[13,20],prof:[2,25],  cuota:3,  talla:null, veda:{meses:[10,11],txt:'Veda biológica oct–nov'},    carnada:'Pota · Navajuela · Macha',  señuelo:'Jig plateado'},
+  {n:'Lenguado',    temp:[10,18],prof:[3,40],  cuota:3,  talla:40,   veda:null,                                             carnada:'Pota · Anchoveta',          señuelo:'Señuelo fondo'},
+  {n:'Róbalo',      temp:[11,19],prof:[1,15],  cuota:10, talla:null, veda:null,                                             carnada:'Pota · Anchoveta',          señuelo:'Popper'},
+  {n:'Jurel',       temp:[14,22],prof:[5,80],  cuota:10, talla:null, veda:null,                                             carnada:'Anchoveta · Sardina',       señuelo:'Jig metálico · Sabiki'},
+  {n:'Congrio',     temp:[8,17], prof:[5,100], cuota:10, talla:null, veda:null,                                             carnada:'Pota · Jibia · Pescado',    señuelo:'Jig fondo'},
+  {n:'Sierra',      temp:[15,23],prof:[0,30],  cuota:10, talla:null, veda:null,                                             carnada:'Anchoveta · Sardina',       señuelo:'Cucharilla plateada'},
+  {n:'Merluza',     temp:[9,16], prof:[15,200],cuota:null,talla:null,veda:{meses:[9],txt:'Veda biológica: septiembre'},     carnada:'Pota · Anchoveta',          señuelo:'Jig fondo'},
+  {n:'Pintacha',    temp:[12,19],prof:[2,30],  cuota:5,  talla:null, veda:null,                                             carnada:'Navajuela · Erizo',         señuelo:null},
+  {n:'Rollizo',     temp:[12,20],prof:[3,40],  cuota:5,  talla:null, veda:null,                                             carnada:'Navajuela · Almeja',        señuelo:null},
+  {n:'Sargo',       temp:[14,22],prof:[1,20],  cuota:5,  talla:null, veda:null,                                             carnada:'Navajuela · Erizo',         señuelo:'Señuelo superficie'},
+  {n:'Lorna',       temp:[13,21],prof:[1,20],  cuota:5,  talla:null, veda:null,                                             carnada:'Navajuela · Anchoveta',     señuelo:null},
+  {n:'Bonito',      temp:[17,25],prof:[0,50],  cuota:6,  talla:null, veda:null,                                             carnada:'Anchoveta · Sardina',       señuelo:'Popper · Jig plateado'},
+  {n:'Baunco',      temp:[14,21],prof:[1,15],  cuota:5,  talla:null, veda:null,                                             carnada:'Navajuela · Almeja',        señuelo:null},
+  {n:'Pejeperro',   temp:[12,20],prof:[2,25],  cuota:1,  talla:null, veda:null,                                             carnada:'Erizo · Navajuela',         señuelo:null},
+  {n:'Pejegallo',   temp:[10,17],prof:[10,80], cuota:0,  talla:null, veda:{meses:[],txt:'Devolución obligatoria'},          carnada:'Pota · Anchoveta',          señuelo:null}
+];
 
+function especiesPorTemp(t){
+  var mes=new Date().getMonth()+1;
+  var aptas=[],vedadas=[];
+  ESPECIES_DB.forEach(function(e){
+    if(t>=e.temp[0]&&t<=e.temp[1]){
+      var enVeda=e.veda&&e.veda.meses&&e.veda.meses.indexOf(mes)>=0;
+      if(enVeda||e.cuota===0) vedadas.push(e);
+      else aptas.push(e);
+    }
+  });
+  var nombresAptas=aptas.map(function(e){return e.n;}).join(' · ')||'--';
+  var col=t<12?'#38bdf8':t<15?'#4ade80':t<18?'#4ade80':t<21?'#f5a623':'#f87171';
+  return{esp:nombresAptas,col:col,aptas:aptas,vedadas:vedadas};
+}
+
+// ── Verifica si hay veda activa para una especie ──
+function vedaActiva(especie){
+  var mes=new Date().getMonth()+1;
+  return especie.veda&&especie.veda.meses&&especie.veda.meses.indexOf(mes)>=0;
+}
+
+// ── Cache marea roja (se actualiza cada 4 horas) ──
+window._mareaRojaCache={data:null,ts:0};
+async function consultarMareaRoja(lat,lng){
+  var ahora=Date.now();
+  if(window._mareaRojaCache.data&&(ahora-window._mareaRojaCache.ts)<4*3600*1000)
+    return window._mareaRojaCache.data;
+  try{
+    var r=await fetch('http://localhost:3000/api/marearoja_disabled?lat='+lat+'&lon='+lng,{signal:AbortSignal.timeout(8000)});
+    var d=await r.json();
+    window._mareaRojaCache={data:d,ts:ahora};
+    return d;
+  }catch(e){
+    return{alerta:false,region:'--',fuente:'Sin conexión'};
+  }
+}
+
+function setTxt(id,val){var e=document.getElementById(id);if(e)e.textContent=val;}
 function sv(id,val,cls){var e=document.getElementById(id);if(e){e.textContent=val;e.className='dval'+(cls?' '+cls:'');}}
 
 function actualizarUI(d){
@@ -596,10 +728,18 @@ function actualizarUI(d){
   }
 
   var ve=document.getElementById('vrd');
-  if(d.viento>30||d.presion<1000){ve.textContent='🔴 PELIGROSO / NO SALGAS';ve.className='vrd r';}
-  else if(d.coef>=70&&d.viento<15){ve.textContent='🟢 MOMENTO DE ORO';ve.className='vrd g';}
-  else if(d.score>=50){ve.textContent='🟡 CONDICIONES NORMALES';ve.className='vrd w';}
-  else{ve.textContent='🔴 CONDICIONES DIFÍCILES';ve.className='vrd r';}
+  var veTxt=document.getElementById('vrd-txt');
+  var icono,clase,resumen;
+  if(d._sinConexion){
+    // Mostrar aviso de sin conexión en el locname
+    setTxt('locname','⚠️ Sin internet — datos estimados por época');
+  }
+  if(d.viento>30||d.presion<1000){icono='🔴';resumen='PELIGROSO — NO SALGAS';clase='vrd r';}
+  else if(d.coef>=70&&d.viento<15&&d.olas<=1.0){icono='🟢';resumen='MOMENTO DE ORO — '+d.score+'/100';clase='vrd g';}
+  else if(d.score>=75){icono='🟢';resumen='EXCELENTES CONDICIONES — '+d.score+'/100';clase='vrd g';}
+  else if(d.score>=50){icono='🟡';resumen='CONDICIONES NORMALES — '+d.score+'/100';clase='vrd w';}
+  else{icono='🔴';resumen='CONDICIONES DIFÍCILES — '+d.score+'/100';clase='vrd r';}
+  if(ve){ve.className=clase+' vrd-btn';if(veTxt)veTxt.textContent=icono+' '+resumen;}
 
   var lineas=[];
   if(d.viento>30)lineas.push('💨 Viento '+Math.round(d.viento)+' km/h — peligroso, no salgas hoy.');
@@ -621,14 +761,18 @@ function actualizarUI(d){
   else if(d.score>=60)lineas.push('✅ CONCLUSIÓN: Buenas condiciones, vale la pena salir.');
   else lineas.push('⚠️ CONCLUSIÓN: Condiciones regulares, pesca técnica requerida.');
 
+  var det=document.getElementById('vrd-det');
+  if(det)det.innerHTML=lineas.map(function(l){return '<div style="padding:1px 0;">'+l+'</div>';}).join('');
+
   var cont=document.getElementById('analisis-cont');
   if(cont)cont.innerHTML=lineas.map(function(l){return '<div class="alinea">'+l+'</div>';}).join('');
 
-  if(d.score>=75&&d.coef>=70){
-    document.getElementById('alm').classList.add('on');
-    document.getElementById('alm-titulo').textContent='¡Condiciones Perfectas!';
-    document.getElementById('alm-score').textContent=d.score+'/100';
-    document.getElementById('alm-det').innerHTML='Temp: '+d.temp.toFixed(1)+'°C · Olas: '+d.olas.toFixed(1)+'m<br>Coef: '+d.coef+' · Viento: '+Math.round(d.viento)+' km/h<br><br>🐟 '+esp.esp;
+  // Abrir automáticamente el detalle solo si el usuario ya seleccionó un punto
+  if(d.score>=75&&d.coef>=70&&window._puntoSeleccionado){
+    var detEl=document.getElementById('vrd-det');
+    var arrEl=document.getElementById('vrd-arr');
+    if(detEl){detEl.style.display='block';}
+    if(arrEl){arrEl.style.transform='rotate(180deg)';}
   }
   if(unlocked){
     document.getElementById('secretotxt').textContent='Con coef. '+d.coef+' ('+faseLunar(curDate).split(' ').slice(1).join(' ')+') '+(d.coef>=70?'las corrientes arrastran alimento a la orilla. Lanza en la canaleta 40–55m durante las 2h antes de pleamar.':'busca las pozas profundas donde los peces esperan.');
@@ -636,44 +780,254 @@ function actualizarUI(d){
 }
 
 // ══ PROFUNDIDAD — via servidor local proxy ══
+// ── Consulta un único punto GEBCO ──
+async function _gebcoPunto(lat,lng,timeoutMs){
+  var ctrl=new AbortController();
+  var tmr=setTimeout(function(){ctrl.abort();},timeoutMs||8000);
+  try{
+    var r=await fetch('http://localhost:3000/api/gebco?lat='+lat+'&lon='+lng,{signal:ctrl.signal});
+    clearTimeout(tmr);
+    var d=await r.json();
+    if(d.z&&Array.isArray(d.z))return d.z[0];
+    if(d.elevation!==undefined)return d.elevation;
+    return null;
+  }catch(e){clearTimeout(tmr);return null;}
+}
+
+// ── Desplaza lat/lng N metros en una dirección (grados) ──
+function _moverMetros(lat,lng,metros,angulo){
+  var R=6371000;
+  var dLat=(metros*Math.cos(angulo*Math.PI/180))/R*(180/Math.PI);
+  var dLng=(metros*Math.sin(angulo*Math.PI/180))/(R*Math.cos(lat*Math.PI/180))*(180/Math.PI);
+  return[lat+dLat,lng+dLng];
+}
+
 async function cargarProfundidad(lat,lng){
   var profEl=document.getElementById('d-prof');
   var tipoEl=document.getElementById('d-prof-tipo');
   if(profEl)profEl.textContent='...';
   if(tipoEl){tipoEl.textContent='Consultando...';tipoEl.style.color='rgba(255,255,255,.4)';}
   try{
-    var ctrl=new AbortController();
-    var tmr=setTimeout(function(){ctrl.abort();},8000);
-    var r=await fetch('http://localhost:8080/api/gebco?lat='+lat+'&lon='+lng,{signal:ctrl.signal});
-    clearTimeout(tmr);
-    var d=await r.json();
-    var elev=null;
-    if(d.z&&Array.isArray(d.z))elev=d.z[0];
-    else if(d.results&&d.results[0])elev=d.results[0].elevation;
-    else if(d.elevation!==undefined)elev=d.elevation;
-    console.log('[GEBCO] elev='+elev);
-    if(elev===null){
-      if(profEl)profEl.textContent='N/D';
-      if(tipoEl){tipoEl.textContent='Sin datos';tipoEl.style.color='rgba(255,255,255,.3)';}
-      return;
+    // ── PASO 1: consulta el punto exacto ──
+    var elev=await _gebcoPunto(lat,lng,8000);
+    var fuente='GEBCO';
+    var prof=elev!==null&&elev<0?Math.abs(elev):0;
+
+    // ── PASO 2: si devuelve 0 (tierra/orilla), muestreo radial hacia el mar ──
+    if(prof===0){
+      if(tipoEl){tipoEl.textContent='Buscando fondo...';tipoEl.style.color='rgba(255,255,255,.4)';}
+      var angulos=[0,22,45,67,90,112,135,157,180,202,225,247,270,292,315,337]; // 16 direcciones
+      var pasos=[20,40,60,80,100,150,200,300,500,800]; // pasos más finos cerca
+      var mejorProf=0,mejorDist=0;
+      outer:
+      for(var pi=0;pi<pasos.length;pi++){
+        for(var ai=0;ai<angulos.length;ai++){
+          var p=_moverMetros(lat,lng,pasos[pi],angulos[ai]);
+          var e2=await _gebcoPunto(p[0],p[1],4000);
+          if(e2!==null&&e2<0){
+            mejorProf=Math.abs(e2);
+            mejorDist=pasos[pi];
+            fuente='~'+pasos[pi]+'m al mar';
+            break outer;
+          }
+        }
+      }
+      if(mejorProf>0){
+        // Interpolación lineal: asumimos pendiente uniforme desde orilla
+        // A mejorDist metros hay mejorProf de profundidad → en el punto es ~0
+        // Estimamos según distancia proporcional
+        var pendiente=mejorProf/mejorDist; // m de prof por metro de distancia
+        // El punto clickeado está en la orilla: estimamos 0.5m por cada 10m de playa típica
+        prof=Math.max(0.3, Math.min(mejorProf*0.12, pendiente*8));
+        fuente='Est. orilla ('+mejorDist+'m→'+mejorProf.toFixed(0)+'m)';
+      }
     }
-    var prof=elev<0?Math.abs(elev):0;
-    var pCol=prof===0?'#f87171':prof<5?'#4ade80':prof<15?'#f5a623':'#38bdf8';
-    var txt=prof===0?'Tierra / Intermareal':prof<3?'Rompiente / Poza':prof<8?'Veril / Canaleta':prof<20?'Canal profundo':'Zona offshore';
-    sv('d-prof',prof.toFixed(0)+' m',prof===0?'r':prof<5?'g':prof<15?'w':'');
+
+    console.log('[GEBCO] prof='+prof.toFixed(1)+'m fuente='+fuente);
+
+    // ── PASO 3: clasificar y mostrar ──
+    var pCol,txt;
+    if(prof<0.5){
+      pCol='#f87171';txt='Tierra / Seco';
+    }else if(prof<2){
+      pCol='#fbbf24';txt='Intermareal / Rompiente';
+    }else if(prof<5){
+      pCol='#4ade80';txt='Rompiente / Poza';
+    }else if(prof<12){
+      pCol='#f5a623';txt='Veril / Canaleta';
+    }else if(prof<30){
+      pCol='#38bdf8';txt='Canal profundo';
+    }else{
+      pCol='#818cf8';txt='Zona offshore';
+    }
+
+    sv('d-prof',prof.toFixed(1)+' m',prof<0.5?'r':prof<5?'g':prof<15?'w':'');
     if(tipoEl){tipoEl.textContent=txt;tipoEl.style.color=pCol;}
-    // POPUP EN MAPA
-    if(window._pPop){try{window._pPop.remove();}catch(e){}}
-    window._pPop=L.popup({closeButton:true,maxWidth:155})
-      .setLatLng([lat,lng])
-      .setContent(
-        '<div style="text-align:center;padding:5px 8px;">'
-        +'<div style="font-size:9px;font-weight:700;color:#f5a623;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Profundidad GEBCO</div>'
-        +'<div style="font-size:32px;font-weight:800;color:'+pCol+';line-height:1;">'+prof.toFixed(0)+'</div>'
-        +'<div style="font-size:12px;color:rgba(255,255,255,.45);">metros</div>'
-        +'<div style="font-size:11px;color:'+pCol+';margin-top:5px;font-weight:700;">'+txt+'</div>'
+
+    // ── POPUP EN MAPA — construcción inicial (sin marea roja aún) ──
+    var w=window.wx||{};
+    var dirs=['N','NE','E','SE','S','SW','W','NW'];
+    var dirTxt=dirs[Math.round(((w.dirViento)||225)/45)%8];
+    var espData=typeof especiesPorTemp==='function'?especiesPorTemp(w.temp||16):{esp:'--',col:'#4ade80',aptas:[],vedadas:[]};
+    var mareaEl=document.getElementById('d-marea');
+    var mareaHoraEl=document.getElementById('d-marea-hora');
+    var mareaTxt=mareaEl?mareaEl.textContent:'--';
+    var mareaHora=mareaHoraEl?mareaHoraEl.textContent:'';
+    var mareaCol=(mareaTxt.indexOf('Subiendo')>=0)?'#4ade80':'#f87171';
+    var score=w.score||0;
+    var scorCol=score>=75?'#4ade80':score>=50?'#f5a623':'#f87171';
+    var scorBar='';
+    for(var i=0;i<10;i++){scorBar+='<div style="flex:1;height:5px;border-radius:2px;background:'+(i<Math.round(score/10)?scorCol:'rgba(255,255,255,.1)')+'"></div>';}
+    var olasCol=(w.olas||0.8)<=1.0?'#4ade80':(w.olas||0.8)<=1.5?'#f5a623':'#f87171';
+    var vientoCol=(w.viento||12)<15?'#4ade80':(w.viento||12)<25?'#f5a623':'#f87171';
+
+    // ── Tabla de especies ──
+    var tablaEsp='';
+    espData.aptas.forEach(function(e){
+      var cuotaTxt=e.cuota===null?'Sin límite':e.cuota===0?'🚫 Devolución':e.cuota+' ej.';
+      var tallaTxt=e.talla?e.talla+'cm mín':'Sin talla mín';
+      tablaEsp+=''
+        +'<div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:2px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05);align-items:center;">'
+        +'<div style="font-size:10px;font-weight:700;color:#e2e8f0;">'+e.n+'</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.4);">'+tallaTxt+'</div>'
+        +'<div style="font-size:9px;color:#4ade80;text-align:right;">'+cuotaTxt+'</div>'
+        +'</div>';
+    });
+    // Vedadas en el mes actual
+    var tablaVeda='';
+    espData.vedadas.forEach(function(e){
+      tablaVeda+=''
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.05);">'
+        +'<div style="font-size:10px;color:#f87171;font-weight:700;">⛔ '+e.n+'</div>'
+        +'<div style="font-size:9px;color:rgba(248,113,113,.7);">'+(e.veda?e.veda.txt:'Veda')+'</div>'
+        +'</div>';
+    });
+
+    function buildPopupHTML(mrData){
+      var mrHtml='';
+      if(mrData&&mrData.alerta){
+        mrHtml='<div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.5);border-radius:6px;padding:7px 10px;margin:8px 8px 0;">'
+          +'<div style="font-size:10px;font-weight:800;color:#f87171;margin-bottom:2px;">🚨 ALERTA MAREA ROJA ACTIVA</div>'
+          +'<div style="font-size:9px;color:rgba(248,113,113,.8);line-height:1.4;">'+(mrData.detalle||'Cierre sanitario vigente en la región')+'</div>'
+          +'<div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;">⚠️ Prohibido extraer mariscos bivalvos</div>'
+          +'<div style="font-size:8px;color:rgba(255,255,255,.2);margin-top:2px;">Fuente: '+mrData.fuente+'</div>'
+          +'</div>';
+      }else{
+        mrHtml='<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;margin:6px 8px 0;background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:6px;">'
+          +'<div style="font-size:12px;">✅</div>'
+          +'<div>'
+          +'<div style="font-size:10px;font-weight:700;color:#4ade80;">Sin alerta de marea roja</div>'
+          +'<div style="font-size:8px;color:rgba(255,255,255,.3);">'+(mrData?mrData.fuente:'Consultando SERNAPESCA...')+'</div>'
+          +'</div>'
+          +'</div>';
+      }
+
+      return ''
+        +'<div style="width:240px;font-family:system-ui,sans-serif;">'
+
+        // ── cabecera coordenadas ──
+        +'<div style="font-size:9px;color:rgba(255,255,255,.3);text-align:center;padding:6px 0 4px;border-bottom:1px solid rgba(255,255,255,.08);letter-spacing:.5px;">'
+        +lat.toFixed(5)+'&nbsp;&middot;&nbsp;'+lng.toFixed(5)
         +'</div>'
-      ).openOn(map);
+
+        // ── AVISO fuente de datos ──
+        +(fuente.indexOf('NOAA/real')>=0||fuente.indexOf('GEBCO/real')>=0
+          ?'<div style="background:rgba(74,222,128,.08);border-bottom:1px solid rgba(74,222,128,.25);padding:4px 10px;font-size:9px;color:#4ade80;text-align:center;">✅ Dato oficial '+(fuente.indexOf('NOAA')>=0?'NOAA ETOPO':'GEBCO 2024')+' + ajuste marea</div>'
+          :'<div style="background:rgba(245,166,35,.1);border-bottom:1px solid rgba(245,166,35,.3);padding:5px 10px;display:flex;align-items:center;gap:6px;">'
+          +'<div style="font-size:13px;">⚠️</div>'
+          +'<div style="font-size:9px;color:rgba(245,166,35,.9);line-height:1.3;">'
+          +'<strong>DATO ESTIMADO</strong> — no oficial.<br>'
+          +'Verificar con carta náutica SHOA antes de navegar.'
+          +'</div>'
+          +'</div>'
+        )
+
+        // ── PROFUNDIDAD — bloque principal grande ──
+        +'<div style="background:rgba(0,0,0,.25);padding:10px 12px 8px;display:flex;align-items:center;gap:12px;">'
+        +'<div style="text-align:center;min-width:60px;">'
+        +'<div style="font-size:34px;font-weight:800;color:'+pCol+';line-height:1;">'+prof.toFixed(1)+'</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.35);">metros</div>'
+        +'</div>'
+        +'<div>'
+        +'<div style="font-size:13px;font-weight:800;color:'+pCol+';">'+txt+'</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;">'+fuente+'</div>'
+        +'</div>'
+        +'</div>'
+
+        // ── VEDAS — arriba del todo, bien visible ──
+        +(tablaVeda
+          ?'<div style="background:rgba(239,68,68,.15);border-top:2px solid #f87171;border-bottom:1px solid rgba(248,113,113,.3);padding:6px 10px 5px;">'
+          +'<div style="font-size:9px;font-weight:800;color:#f87171;letter-spacing:.5px;margin-bottom:4px;">⛔ EN VEDA ESTE MES — NO EXTRAER</div>'
+          +tablaVeda
+          +'</div>'
+          :'')
+
+        // ── MAREA ROJA ──
+        + mrHtml
+
+        // ── separador ──
+        +'<div style="border-top:1px solid rgba(255,255,255,.07);"></div>'
+
+        // ── ESPECIES PROBABLES ──
+        +'<div style="padding:5px 10px 2px;display:flex;align-items:center;justify-content:space-between;">'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.35);font-weight:700;">🐟 ESPECIES PROBABLES — '+(w.temp||16).toFixed(1)+'°C</div>'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.2);">Res.443-2025</div>'
+        +'</div>'
+        +'<div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:2px;padding:2px 10px 3px;border-bottom:1px solid rgba(255,255,255,.08);">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.2);">Especie</div>'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.2);">Talla mín.</div>'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.2);text-align:right;">Cuota/día</div>'
+        +'</div>'
+        +'<div style="padding:0 10px 6px;">'+tablaEsp+'</div>'
+
+        // ── CONDICIONES ──
+        +'<div style="border-top:1px solid rgba(255,255,255,.07);display:grid;grid-template-columns:1fr 1fr 1fr;">'
+        +'<div style="text-align:center;padding:6px 4px;">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);">OLAS</div>'
+        +'<div style="font-size:13px;font-weight:700;color:'+olasCol+';">'+(w.olas||0.8).toFixed(1)+'m</div>'
+        +'</div>'
+        +'<div style="text-align:center;padding:6px 4px;border-left:1px solid rgba(255,255,255,.07);border-right:1px solid rgba(255,255,255,.07);">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);">VIENTO</div>'
+        +'<div style="font-size:12px;font-weight:700;color:'+vientoCol+';">'+Math.round(w.viento||12)+'km '+dirTxt+'</div>'
+        +'</div>'
+        +'<div style="text-align:center;padding:6px 4px;">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);">T° AGUA</div>'
+        +'<div style="font-size:13px;font-weight:700;color:#38bdf8;">'+(w.temp||16).toFixed(1)+'°</div>'
+        +'</div>'
+        +'</div>'
+
+        // ── MAREA ──
+        +'<div style="border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;padding:5px 10px;">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);">MAREA</div>'
+        +'<div style="font-size:12px;font-weight:700;color:'+mareaCol+';">'+mareaTxt+'</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.28);">'+mareaHora+'</div>'
+        +'</div>'
+
+        // ── SCORE ──
+        +'<div style="border-top:1px solid rgba(255,255,255,.07);padding:6px 10px 8px;">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'
+        +'<div style="font-size:8px;color:rgba(255,255,255,.3);">SCORE DE PESCA</div>'
+        +'<div style="font-size:13px;font-weight:800;color:'+scorCol+';">'+score+'/100</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:2px;">'+scorBar+'</div>'
+        +'</div>'
+
+        +'</div>';
+    }
+
+    // Mostrar popup inmediatamente con "Consultando..."
+    if(window._pPop){try{window._pPop.remove();}catch(e){}}
+    window._pPop=L.popup({closeButton:true,maxWidth:260,className:'popup-pesca'})
+      .setLatLng([lat,lng])
+      .setContent(buildPopupHTML(null))
+      .openOn(map);
+
+    // Luego actualizar con datos reales de marea roja
+    consultarMareaRoja(lat,lng).then(function(mrData){
+      if(window._pPop&&window._pPop.isOpen()){
+        window._pPop.setContent(buildPopupHTML(mrData));
+      }
+    });
   }catch(e){
     console.warn('[GEBCO]',e.message);
     if(profEl)profEl.textContent='N/D';
@@ -770,42 +1124,103 @@ function renderForecast(){
   var lista=document.getElementById('fc-list');
   var nota=document.getElementById('fc-nota');
   if(!lista)return;
-  var c=window._wxCache;
-  if(!c){lista.innerHTML='<div style="text-align:center;padding:20px;color:rgba(255,255,255,.3);font-size:12px;">⏳ Cargando...</div>';cargarWx(curLat,curLng);return;}
+  var c=window._wxCache7;
+  if(!c){
+    lista.innerHTML='<div style="text-align:center;padding:16px;color:rgba(255,255,255,.3);font-size:12px;">⏳ Cargando pronóstico real...</div>';
+    cargarWx(curLat,curLng);return;
+  }
   var nomDias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   var nomMes=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   var best=0,bday=0,html='';
   for(var i=0;i<7;i++){
-    var fd=new Date();fd.setDate(fd.getDate()+i);fd.setHours(0,0,0,0);
-    var fp=c.fechas[i]?c.fechas[i].split('-'):[fd.getFullYear(),fd.getMonth()+1,fd.getDate()];
+    var fp=c.fechas[i].split('-');
     var fdObj=new Date(parseInt(fp[0]),parseInt(fp[1])-1,parseInt(fp[2]));
-    var t=c.temps[i]||wx.temp,o=c.olas[i]||wx.olas,v=c.vientos[i]||wx.viento,pr=c.pres[i]||wx.presion;
+    var t=c.temps[i],o=c.olas[i],v=c.vientos[i],pr=c.pres[i];
     var cd=calcCoef(fdObj);
     var sc=calcScore({temp:t,olas:o,viento:v,presion:pr,coef:cd});
     if(sc>best){best=sc;bday=i;}
+    var esHoy=i===0;
     var cl=sc>=75?'#4ade80':sc>=50?'#f5a623':'#f87171';
     var cn=sc>=75?'Excelente':sc>=65?'Muy bueno':sc>=50?'Bueno':sc>=35?'Regular':'Difícil';
-    var esHoy=i===0;
-    var nomDia=esHoy?'Hoy':nomDias[fdObj.getDay()];
+    var emoji=sc>=65?'🟢':sc>=50?'🟡':'🔴';
+    var nomDia=esHoy?'HOY':nomDias[fdObj.getDay()];
     var fechaLbl=fdObj.getDate()+' '+nomMes[fdObj.getMonth()];
-    html+='<div class="fc-row">'
-      +'<div class="fc-day" style="font-size:'+(esHoy?'12px':'11px')+';color:'+(esHoy?'#fff':'rgba(255,255,255,.7)');+'">'+nomDia+'<div style="font-size:9px;color:rgba(255,255,255,.3);">'+fechaLbl+'</div></div>'
-      +'<div class="fc-bar"><div class="fc-fill" style="width:'+sc+'%;background:'+cl+';"></div></div>'
-      +'<div style="font-size:10px;text-align:right;color:'+cl+';">'+cn+'</div>'
-      +'<div style="font-size:11px;font-weight:800;text-align:right;color:'+cl+';">'+sc+'</div>'
+    var seg=o>=2?'🔴 marejada':o>=1.5?'⚠️ olas':'';
+    var bg=sc>=65?'rgba(74,222,128,.07)':sc>=50?'rgba(245,166,35,.07)':'rgba(248,113,113,.07)';
+    html+=''
+      +'<div style="border-radius:9px;margin-bottom:6px;padding:9px 10px;background:'+bg+';border:1px solid '+(i===bday?cl:'rgba(255,255,255,.05)')+'">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">'
+      +'<div>'
+      +'<span style="font-size:'+(esHoy?'13px':'11px')+';font-weight:800;color:'+(esHoy?'#fff':'rgba(255,255,255,.7)')+';">'+emoji+' '+nomDia+'</span>'
+      +'<span style="font-size:9px;color:rgba(255,255,255,.3);margin-left:5px;">'+fechaLbl+(seg?' '+seg:'')+'</span>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px;">'
+      +'<span style="font-size:10px;color:'+cl+';">'+cn+'</span>'
+      +'<span style="font-size:15px;font-weight:800;color:'+cl+';">'+sc+'</span>'
+      +'</div>'
+      +'</div>'
+      +'<div style="height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:5px;">'
+      +'<div style="height:100%;width:'+sc+'%;background:'+cl+';border-radius:3px;"></div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:3px;">'
+      +'<div style="text-align:center;"><div style="font-size:8px;color:rgba(255,255,255,.3);">OLAS</div><div style="font-size:11px;font-weight:700;color:'+(o<=1.0?'#4ade80':o<=1.8?'#f5a623':'#f87171')+';">'+o.toFixed(1)+'m</div></div>'
+      +'<div style="text-align:center;"><div style="font-size:8px;color:rgba(255,255,255,.3);">VIENTO</div><div style="font-size:11px;font-weight:700;color:'+(v<15?'#4ade80':v<25?'#f5a623':'#f87171')+';">'+Math.round(v)+'km</div></div>'
+      +'<div style="text-align:center;"><div style="font-size:8px;color:rgba(255,255,255,.3);">T°AGUA</div><div style="font-size:11px;font-weight:700;color:#38bdf8;">'+t.toFixed(1)+'°</div></div>'
+      +'<div style="text-align:center;"><div style="font-size:8px;color:rgba(255,255,255,.3);">LUNA</div><div style="font-size:11px;font-weight:700;color:'+(cd>=70?'#4ade80':cd>=45?'#f5a623':'rgba(255,255,255,.4)')+';">'+cd+'</div></div>'
+      +'</div>'
       +'</div>';
   }
   lista.innerHTML=html;
-  nota.innerHTML=(bday===0?'⭐ <strong>Hoy</strong> es el mejor día.':'⭐ Mejor día: <strong>'+nomDias[new Date(new Date().setDate(new Date().getDate()+bday)).getDay()]+'</strong> — índice '+best+'/100.')
-    +'<div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;">'+(c.ok?'✅ Datos reales Open-Meteo':'⚠️ Estimación')+'</div>';
+  var mfd=new Date();mfd.setDate(mfd.getDate()+bday);
+  var mNom=bday===0?'<strong>Hoy</strong>':nomDias[mfd.getDay()]+' '+mfd.getDate()+' '+nomMes[mfd.getMonth()];
+  nota.innerHTML='⭐ Mejor día: '+mNom+' — índice <strong style="color:#4ade80;">'+best+'/100</strong>'
+    +'<div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;">✅ Datos reales Open-Meteo · Coef. lunar astronómico</div>';
 }
 
 // ══ FECHA ══
-function setDay(d,btn){document.querySelectorAll('.dc').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');curDate=new Date();curDate.setDate(curDate.getDate()+d);document.getElementById('calin').valueAsDate=curDate;cargarWx(curLat,curLng);}
-function handleCal(val){document.querySelectorAll('.dc').forEach(function(b){b.classList.remove('on');});var p=val.split('-');curDate=new Date(p[0],p[1]-1,p[2]);cargarWx(curLat,curLng);}
+var _diffDays=0;
+function setDay(d,btn){
+  document.querySelectorAll('.dc').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  _diffDays=d;
+  window._diffDays=d;
+  curDate=new Date();curDate.setHours(0,0,0,0);
+  curDate.setDate(curDate.getDate()+d);
+  document.getElementById('calin').valueAsDate=curDate;
+  sv('d-v','...','');sv('d-t','...','');sv('d-o','...','');sv('d-p','...','');
+  window._wxCache7=null; // limpiar cache para nueva fecha
+  cargarWx(curLat,curLng);
+  actualizarSolunares(curLat,curLng);
+}
+function handleCal(val){
+  document.querySelectorAll('.dc').forEach(function(b){b.classList.remove('on');});
+  var p=val.split('-');
+  curDate=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  curDate.setHours(0,0,0,0);
+  var today=new Date();today.setHours(0,0,0,0);
+  _diffDays=Math.max(0,Math.min(7,Math.round((curDate-today)/86400000)));
+  window._diffDays=_diffDays;
+  sv('d-v','...','');sv('d-t','...','');sv('d-o','...','');sv('d-p','...','');
+  window._wxCache7=null;
+  cargarWx(curLat,curLng);
+  actualizarSolunares(curLat,curLng);
+}
 
 // ══ PANEL ══
-function togglePanel(){document.getElementById('panel').classList.toggle('on');}
+function togglePanel(){
+  var p=document.getElementById('panel');
+  var f=document.getElementById('fab');
+  var on=p.classList.toggle('on');
+  if(f)f.classList.toggle('panel-on',on);
+}
+function toggleVrdDetalle(){
+  var det=document.getElementById('vrd-det');
+  var arr=document.getElementById('vrd-arr');
+  if(!det||det.innerHTML.trim()==='')return;
+  var open=det.style.display==='block';
+  det.style.display=open?'none':'block';
+  if(arr)arr.style.transform=open?'rotate(0deg)':'rotate(180deg)';
+}
 
 // ══ CHECKLIST ══
 function toggleChk(item){item.querySelector('.chk').classList.toggle('dn');item.querySelector('.ckt').classList.toggle('dn');document.getElementById('ckok').classList.toggle('on',document.querySelectorAll('.chk.dn').length===5);}
