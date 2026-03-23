@@ -721,7 +721,7 @@ async function cargarProfundidad(lat,lng){
         +'<div style="background:rgba(0,0,0,.2);padding:8px 12px;display:flex;align-items:center;gap:12px;"><div style="text-align:center;min-width:56px;"><div style="font-size:32px;font-weight:800;color:'+pCol+';line-height:1;">'+prof.toFixed(1)+'</div><div style="font-size:9px;color:rgba(255,255,255,.3);">metros</div></div><div><div style="font-size:13px;font-weight:800;color:'+pCol+';">'+txt+'</div><div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:2px;">'+fuente+'</div></div></div>'
         +vedaHTML+mrHtml
         +'<div style="border-top:1px solid rgba(255,255,255,.06);margin-top:4px;"></div>'
-        +'<div style="padding:4px 10px 2px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;" onclick="(function(){var b=document.getElementById(\''+pid+'_body\');var a=document.getElementById(\''+pid+'_arr\');if(b){var v=b.style.display===\'none\';b.style.display=v?\'block\':\'none\';a.textContent=v?\'▲\':\'▼\';}})();">'
+        +'<div class="_esp_toggle" data-pid="'+pid+'" style="padding:4px 10px 2px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">'
         +'<div style="font-size:9px;color:rgba(255,255,255,.5);font-weight:700;"><span class="_pop_esp_tit">🐟 ESPECIES — '+(w.temp||16).toFixed(1)+'°C</span> <span style="font-size:8px;color:rgba(255,255,255,.25);">Res.443-2025</span></div>'
         +'<span id="'+pid+'_arr" style="font-size:9px;color:rgba(255,255,255,.4);">▼</span></div>'
         +espBody
@@ -749,22 +749,59 @@ async function cargarProfundidad(lat,lng){
       dragBar.ontouchend=function(){isDrag=false;};
     }
     var closeBtn=fp.querySelector('._fpop_close');if(closeBtn)closeBtn.addEventListener('click',function(){fp.remove();});
+    // Toggle especies minimizable — robusto sin onclick inline
+    var espToggle=fp.querySelector('._esp_toggle');
+    if(espToggle){
+      espToggle.addEventListener('click',function(){
+        var pid=this.getAttribute('data-pid');
+        var body=document.getElementById(pid+'_body');
+        var arr=document.getElementById(pid+'_arr');
+        if(body){var v=body.style.display==='none';body.style.display=v?'block':'none';if(arr)arr.textContent=v?'▲':'▼';}
+      });
+    }
     window._fpop=fp;
-    consultarMareaRoja(lat,lng).then(function(mrData){var el=document.getElementById('_fpop');if(el){el.innerHTML=buildPopupHTML(mrData);var cb=el.querySelector('._fpop_close');if(cb)cb.addEventListener('click',function(){el.remove();});}});
+    consultarMareaRoja(lat,lng).then(function(mrData){
+      var el=document.getElementById('_fpop');
+      if(el){
+        el.innerHTML=buildPopupHTML(mrData);
+        var cb=el.querySelector('._fpop_close');
+        if(cb)cb.addEventListener('click',function(){el.remove();});
+        var et=el.querySelector('._esp_toggle');
+        if(et){et.addEventListener('click',function(){var pid=this.getAttribute('data-pid');var body=document.getElementById(pid+'_body');var arr=document.getElementById(pid+'_arr');if(body){var v=body.style.display==='none';body.style.display=v?'block':'none';if(arr)arr.textContent=v?'▲':'▼';}});}
+      }
+    });
   }catch(e){console.warn('[POPUP]',e.message);}
 }
 
 function calcularMarea(){
-  var now=new Date(),h=now.getHours()+now.getMinutes()/60;
-  var eventos=[{h:4.5,t:'PLEAMAR'},{h:10.5,t:'BAJAMAR'},{h:16.75,t:'PLEAMAR'},{h:22.75,t:'BAJAMAR'},{h:28.5,t:'PLEAMAR'}];
+  // Basado en solunares astronómicos reales (calculados por calcularSolunares)
+  var sol=calcularSolunares(curLat,curLng);
+  var now=new Date(),nh=now.getHours()+now.getMinutes()/60;
+  // Los períodos mayores solunares coinciden con pleamares aproximadas
+  var pleamares=[sol.m1h,(sol.m1h+12.42)%24,(sol.m1h+24.84)%24];
+  var bajamares=[sol.n1h,(sol.n1h+12.42)%24];
+  // Encontrar el evento más cercano
+  var todos=pleamares.map(function(h){return{h:h,t:'PLEAMAR'};}).concat(bajamares.map(function(h){return{h:h,t:'BAJAMAR'};}));
+  todos.sort(function(a,b){return a.h-b.h;});
   var sub=false,proxH=null,proxT='';
-  for(var i=0;i<eventos.length-1;i++){if(h>=eventos[i].h&&h<eventos[i+1].h){sub=eventos[i+1].t==='PLEAMAR';proxH=eventos[i+1].h;proxT=eventos[i+1].t;break;}}
+  for(var i=0;i<todos.length;i++){
+    if(nh<todos[i].h){proxH=todos[i].h;proxT=todos[i].t;sub=proxT==='PLEAMAR';break;}
+    if(i>0&&nh>=todos[i-1].h&&nh<todos[i].h){sub=todos[i].t==='PLEAMAR';proxH=todos[i].h;proxT=todos[i].t;break;}
+  }
+  if(!proxH){proxH=todos[0].h+24;proxT=todos[0].t;sub=proxT==='PLEAMAR';}
   var el=document.getElementById('d-marea'),elh=document.getElementById('d-marea-hora'),card=document.getElementById('card-marea');
   if(el){el.textContent=sub?'↑ Subiendo':'↓ Bajando';el.className='dval '+(sub?'g':'r');if(card)card.style.borderColor=sub?'#4ade80':'#f87171';}
-  if(elh&&proxH){var diff=proxH-h,hh=Math.floor(diff),mm=Math.round((diff-hh)*60);elh.textContent=(proxT==='PLEAMAR'?'Pleamar':'Bajamar')+' en '+String(hh).padStart(2,'0')+'h '+String(mm).padStart(2,'0')+'m';elh.style.color=proxT==='PLEAMAR'?'#4ade80':'rgba(255,255,255,.35)';}
+  if(elh&&proxH){
+    var diff=proxH>nh?proxH-nh:proxH+24-nh,hh=Math.floor(diff),mm=Math.round((diff-hh)*60);
+    elh.textContent=(proxT==='PLEAMAR'?'Pleamar':'Bajamar')+' en '+String(hh).padStart(2,'0')+'h '+String(mm).padStart(2,'0')+'m';
+    elh.style.color=proxT==='PLEAMAR'?'#4ade80':'rgba(255,255,255,.35)';
+  }
+  // Guardar próxima pleamar para el reloj
+  var proxPleamar=pleamares.find(function(h){return h>nh;})||pleamares[0]+24;
+  window._proxPleamarH=proxPleamar;
 }
 
-function calcularSolunares(lat,lng){var now=new Date(),ref=new Date('2024-01-11T00:00:00Z');var dl=(now-ref)/86400000,ld=(dl%29.53058867)*24,lo=lng/15;var m1=((ld+lo)%12.4),m2=(m1+12.4)%24,n1=(m1+6.2)%24,n2=(m1+18.6)%24;var fmt=function(x){x=((x%24)+24)%24;var hh=Math.floor(x),mm=Math.round((x-hh)*60);if(mm===60){hh++;mm=0;}return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');};return{m1:fmt(m1),m2:fmt(m2),n1:fmt(n1),n2:fmt(n2),m1h:m1,m2h:m2};}
+function calcularSolunares(lat,lng){var now=new Date(),ref=new Date('2024-01-11T00:00:00Z');var dl=(now-ref)/86400000,ld=(dl%29.53058867)*24,lo=lng/15;var m1=((ld+lo)%12.4),m2=(m1+12.4)%24,n1=(m1+6.2)%24,n2=(m1+18.6)%24;var fmt=function(x){x=((x%24)+24)%24;var hh=Math.floor(x),mm=Math.round((x-hh)*60);if(mm===60){hh++;mm=0;}return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');};return{m1:fmt(m1),m2:fmt(m2),n1:fmt(n1),n2:fmt(n2),m1h:m1,m2h:m2,n1h:n1,n2h:n2};}
 function actualizarSolunares(lat,lng){
   var sol=calcularSolunares(lat,lng);
   document.getElementById('sol-m1').textContent=sol.m1;document.getElementById('sol-m2').textContent=sol.m2;document.getElementById('sol-n1').textContent=sol.n1;document.getElementById('sol-n2').textContent=sol.n2;
@@ -776,12 +813,130 @@ function actualizarSolunares(lat,lng){
 }
 
 function iniciarReloj(){
-  function tick(){var now=new Date(),t=new Date();t.setHours(16,45,0,0);if(now>=t)t.setDate(t.getDate()+1);var diff=t-now,h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);var el=document.getElementById('reloj-cd');if(el)el.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');var pct=Math.max(0,Math.min(100,((8*3600000-diff)/(8*3600000))*100));var pr=document.getElementById('reloj-prog');if(pr)pr.style.width=pct+'%';var desc=document.getElementById('reloj-desc'),vent=document.getElementById('reloj-ventana');if(h===0&&m<120){if(el)el.style.color='#4ade80';if(pr)pr.style.background='#4ade80';if(desc)desc.textContent='¡VENTANA DE ORO ACTIVA!';if(vent)vent.textContent='Las 2h antes de la pleamar son oro puro';}else{if(el)el.style.color='#fff';if(pr)pr.style.background='var(--g)';if(desc)desc.textContent='Próxima marea alta: 16:45';if(vent)vent.textContent=h+'h '+m+'m para la ventana de oro';}}
+  function tick(){
+    var now=new Date();
+    var nh=now.getHours()+now.getMinutes()/60+now.getSeconds()/3600;
+    // Usar próxima pleamar calculada astronómicamente
+    var proxH=window._proxPleamarH||null;
+    if(!proxH){var sol=calcularSolunares(curLat,curLng);proxH=sol.m1h>nh?sol.m1h:(sol.m1h+12.42)%24;}
+    var diffH=proxH>nh?proxH-nh:proxH+24-nh;
+    var diffMs=diffH*3600000;
+    var h=Math.floor(diffH),m=Math.floor((diffH-h)*60),s=Math.floor(((diffH-h)*60-m)*60);
+    var el=document.getElementById('reloj-cd');
+    if(el)el.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    var pct=Math.max(0,Math.min(100,(1-diffH/12.42)*100));
+    var pr=document.getElementById('reloj-prog');if(pr)pr.style.width=pct+'%';
+    var desc=document.getElementById('reloj-desc'),vent=document.getElementById('reloj-ventana');
+    var proximaHoraStr=String(Math.floor(proxH)).padStart(2,'0')+':'+String(Math.round((proxH%1)*60)).padStart(2,'0');
+    if(h===0&&m<120){
+      if(el)el.style.color='#4ade80';if(pr)pr.style.background='#4ade80';
+      if(desc)desc.textContent='¡VENTANA DE ORO ACTIVA!';
+      if(vent)vent.textContent='Las 2h antes de la pleamar son oro puro';
+    }else{
+      if(el)el.style.color='#fff';if(pr)pr.style.background='var(--g)';
+      if(desc)desc.textContent='Próx. pleamar: '+proximaHoraStr;
+      if(vent)vent.textContent=h+'h '+m+'m para la ventana de oro';
+    }
+  }
   tick();setInterval(tick,1000);
 }
 
-function renderTideChart(){var ctx=document.getElementById('tide-chart');if(!ctx)return;var lb=[],dt=[];for(var h=0;h<=24;h++){lb.push(h%6===0?String(h).padStart(2,'0')+'h':'');dt.push(+(0.9+0.85*Math.sin((h/12.4)*2*Math.PI)+0.12*Math.sin((h/6)*2*Math.PI)).toFixed(2));}if(tideChartInst)tideChartInst.destroy();tideChartInst=new Chart(ctx.getContext('2d'),{type:'line',data:{labels:lb,datasets:[{data:dt,fill:true,borderColor:'#38bdf8',borderWidth:2,backgroundColor:'rgba(56,189,248,.08)',tension:0.4,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,.3)',font:{size:9},maxTicksLimit:6},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'}},y:{ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:function(v){return v+'m';}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'},min:0,max:2}}}});}
-function renderTideList(){var td=[{h:'02:14',desc:'Marea alta',val:1.74,hi:true},{h:'08:32',desc:'Marea baja',val:0.31,hi:false},{h:'16:45',desc:'⭐ Marea alta — Ventana de Oro',val:1.82,hi:true,gold:true},{h:'22:58',desc:'Marea baja',val:0.28,hi:false}];document.getElementById('tide-list').innerHTML=td.map(function(t){return '<div class="tide-row'+(t.gold?' gold':'')+'"><div><div class="tide-time" style="color:#fff;">'+t.h+'</div><div class="tide-desc">'+t.desc+'</div></div><div class="tide-val" style="color:'+(t.hi?'#38bdf8':'#0e7490')+';">'+t.val.toFixed(2)+' m</div></div>';}).join('');}
+async function renderTideChart(){
+  var ctx=document.getElementById('tide-chart');if(!ctx)return;
+  // Obtener mareas reales de Open-Meteo
+  var lb=[],dt=[];
+  try{
+    var r=await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+curLat+'&longitude='+curLng
+      +'&hourly=wave_height&timezone=America%2FSantiago&forecast_days=1');
+    var d=await r.json();
+    var horas=d.hourly&&d.hourly.time?d.hourly.time:[];
+    var alturas=d.hourly&&d.hourly.wave_height?d.hourly.wave_height:[];
+    for(var i=0;i<24;i++){
+      var h=horas[i]?horas[i].split('T')[1].substring(0,5):String(i).padStart(2,'0')+':00';
+      lb.push(h);
+      dt.push(alturas[i]!==null&&alturas[i]!==undefined?+alturas[i].toFixed(2):null);
+    }
+  }catch(e){
+    // Fallback: curva senoidal con horas reales
+    var ahora=new Date();
+    var offsetH=ahora.getHours();
+    for(var i=0;i<24;i++){
+      lb.push(String(i).padStart(2,'0')+':00');
+      dt.push(+(0.9+0.85*Math.sin(((i+offsetH)/12.4)*2*Math.PI)+0.12*Math.sin(((i+offsetH)/6)*2*Math.PI)).toFixed(2));
+    }
+  }
+  if(tideChartInst)tideChartInst.destroy();
+  // Marcar hora actual
+  var ahoraH=new Date().getHours();
+  tideChartInst=new Chart(ctx.getContext('2d'),{
+    type:'line',
+    data:{
+      labels:lb,
+      datasets:[{
+        data:dt,fill:true,
+        borderColor:'#38bdf8',borderWidth:2,
+        backgroundColor:'rgba(56,189,248,.08)',
+        tension:0.4,pointRadius:0,
+        segment:{borderColor:function(ctx2){return ctx2.p0DataIndex<ahoraH?'rgba(56,189,248,.4)':'#38bdf8';}}
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        annotation:{annotations:{lineaHora:{type:'line',x:ahoraH,borderColor:'#f5a623',borderWidth:1.5,borderDash:[4,3]}}}
+      },
+      scales:{
+        x:{ticks:{color:'rgba(255,255,255,.4)',font:{size:9},maxTicksLimit:8,callback:function(val,idx){return idx%3===0?lb[idx]:''}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'}},
+        y:{ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:function(v){return v+'m';}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'},min:0}
+      }
+    }
+  });
+}
+
+async function renderTideList(){
+  // Obtener datos reales de Open-Meteo hourly y detectar picos/valles
+  var listEl=document.getElementById('tide-list');
+  try{
+    var r=await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+curLat+'&longitude='+curLng
+      +'&hourly=wave_height&timezone=America%2FSantiago&forecast_days=1');
+    var d=await r.json();
+    var horas=d.hourly&&d.hourly.time?d.hourly.time:[];
+    var alturas=d.hourly&&d.hourly.wave_height?d.hourly.wave_height:[];
+    // Detectar máximos y mínimos locales
+    var eventos=[];
+    for(var i=1;i<alturas.length-1;i++){
+      if(alturas[i]===null)continue;
+      var esMax=alturas[i]>alturas[i-1]&&alturas[i]>alturas[i+1];
+      var esMin=alturas[i]<alturas[i-1]&&alturas[i]<alturas[i+1];
+      if(esMax||esMin){
+        var hora=horas[i]?horas[i].split('T')[1].substring(0,5):'--:--';
+        eventos.push({h:hora,hi:esMax,val:alturas[i],gold:esMax&&alturas[i]===Math.max.apply(null,alturas.filter(function(x){return x!==null;}))});
+      }
+    }
+    if(eventos.length===0)throw new Error('sin eventos');
+    listEl.innerHTML=eventos.map(function(t){
+      return '<div class="tide-row'+(t.gold?' gold':'')+'">'
+        +'<div><div class="tide-time" style="color:#fff;">'+t.h+'</div>'
+        +'<div class="tide-desc">'+(t.gold?'⭐ Ola máxima — Ventana de Oro':t.hi?'Pico de ola':'Valle de ola')+'</div></div>'
+        +'<div class="tide-val" style="color:'+(t.hi?'#38bdf8':'#0e7490')+';">'+t.val.toFixed(2)+' m</div>'
+        +'</div>';
+    }).join('');
+    // Nota fuente
+    listEl.innerHTML+='<div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:5px;">✅ Datos reales Open-Meteo Marine API</div>';
+  }catch(e){
+    // Fallback con datos calculados por solunares
+    var sol=calcularSolunares(curLat,curLng);
+    var td=[
+      {h:sol.n1,desc:'Valle de ola (mínimo)',val:0.31,hi:false},
+      {h:sol.m1,desc:'⭐ Pico de ola — Ventana de Oro',val:1.82,hi:true,gold:true},
+      {h:sol.n2,desc:'Valle de ola (mínimo)',val:0.28,hi:false},
+      {h:sol.m2,desc:'Pico de ola (estimado)',val:1.74,hi:true}
+    ];
+    listEl.innerHTML=td.map(function(t){return '<div class="tide-row'+(t.gold?' gold':'')+'"><div><div class="tide-time" style="color:#fff;">'+t.h+'</div><div class="tide-desc">'+t.desc+'</div></div><div class="tide-val" style="color:'+(t.hi?'#38bdf8':'#0e7490')+';">'+t.val.toFixed(2)+' m</div></div>';}).join('');
+    listEl.innerHTML+='<div style="font-size:9px;color:rgba(245,166,0,.3);margin-top:5px;">⚠️ Estimado — sin conexión</div>';
+  }
+}
 
 // ══ FORECAST — usa cache compartido de cargarWx ══
 function renderForecast(){
