@@ -518,17 +518,22 @@ async function cargarWx(lat,lng){
     ]);
     var d=await Promise.all([rs[0].json(),rs[1].json()]);
     var mc=d[0].current||{},wc=d[1].current||{},dd=d[0].daily||{},da=d[1].daily||{};
-    // Guardar los 7 días en cache compartido
+    // Open-Meteo devuelve wind_speed_10m en km/h (no m/s) — verificar con current
+    // Para hoy: usar current (valor instantáneo real), no el máximo diario
     var c7={temps:[],olas:[],vientos:[],dirs:[],pres:[],fechas:[],ok:true};
     var today0=new Date();today0.setHours(0,0,0,0);
     for(var i=0;i<7;i++){
       var fd=new Date(today0);fd.setDate(today0.getDate()+i);
       c7.fechas.push(fd.toISOString().split('T')[0]);
-      c7.temps.push(i===0?(mc.sea_surface_temperature||(dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[0])||temps[mes]):((dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[i])||temps[mes]));
-      c7.olas.push(i===0?(mc.wave_height||(dd.wave_height_max&&dd.wave_height_max[0])||olasE[mes]):((dd.wave_height_max&&dd.wave_height_max[i])||olasE[mes]));
-      c7.vientos.push(i===0?(wc.wind_speed_10m||(da.wind_speed_10m_max&&da.wind_speed_10m_max[0])||14):((da.wind_speed_10m_max&&da.wind_speed_10m_max[i])||14));
-      c7.dirs.push(i===0?(wc.wind_direction_10m||(da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[0])||225):((da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[i])||225));
-      c7.pres.push(i===0?(wc.surface_pressure||(da.surface_pressure_mean&&da.surface_pressure_mean[0])||1013):((da.surface_pressure_mean&&da.surface_pressure_mean[i])||1013));
+      // Temperatura: current para hoy, daily max para días futuros
+      c7.temps.push(i===0?(mc.sea_surface_temperature||dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[0]||15):((dd.sea_surface_temperature_max&&dd.sea_surface_temperature_max[i])||15));
+      // Olas: current para hoy (valor real), daily max para días futuros
+      c7.olas.push(i===0?(mc.wave_height||dd.wave_height_max&&dd.wave_height_max[0]||0.8):((dd.wave_height_max&&dd.wave_height_max[i])||0.8));
+      // Viento: current para hoy (NO el máximo — eso infla el valor), daily max para futuros
+      var vHoy=wc.wind_speed_10m||14;
+      c7.vientos.push(i===0?vHoy:((da.wind_speed_10m_max&&da.wind_speed_10m_max[i])||14));
+      c7.dirs.push(i===0?(wc.wind_direction_10m||225):((da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[i])||225));
+      c7.pres.push(i===0?(wc.surface_pressure||1013):((da.surface_pressure_mean&&da.surface_pressure_mean[i])||1013));
     }
     window._wxCache7=c7;
     // Actualizar panel inicio con el día seleccionado
@@ -801,7 +806,57 @@ function calcularMarea(){
   window._proxPleamarH=proxPleamar;
 }
 
-function calcularSolunares(lat,lng){var now=new Date(),ref=new Date('2024-01-11T00:00:00Z');var dl=(now-ref)/86400000,ld=(dl%29.53058867)*24,lo=lng/15;var m1=((ld+lo)%12.4),m2=(m1+12.4)%24,n1=(m1+6.2)%24,n2=(m1+18.6)%24;var fmt=function(x){x=((x%24)+24)%24;var hh=Math.floor(x),mm=Math.round((x-hh)*60);if(mm===60){hh++;mm=0;}return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');};return{m1:fmt(m1),m2:fmt(m2),n1:fmt(n1),n2:fmt(n2),m1h:m1,m2h:m2,n1h:n1,n2h:n2};}
+function calcularSolunares(lat,lng){
+  // ── Posición astronómica real de la Luna (algoritmo Jean Meeus) ──
+  var now=new Date();
+  // Número de días julianos desde J2000.0
+  var JD=(now.getTime()/86400000)+2440587.5;
+  var T=(JD-2451545.0)/36525.0;
+  // Longitud media de la Luna
+  var Lm=(218.3164477+481267.88123421*T-0.0015786*T*T+T*T*T/538841)*Math.PI/180;
+  // Anomalía media de la Luna
+  var M=(134.9634114+477198.8676313*T+0.0089970*T*T+T*T*T/69699)*Math.PI/180;
+  // Anomalía media del Sol
+  var Ms=(357.5291092+35999.0502909*T-0.0001536*T*T)*Math.PI/180;
+  // Argumento de latitud de la Luna
+  var F=(93.2720950+483202.0175233*T-0.0036539*T*T)*Math.PI/180;
+  // Elongación media
+  var D=(297.8501921+445267.1114034*T-0.0018819*T*T+T*T*T/545868)*Math.PI/180;
+  // Longitud eclíptica real con correcciones principales
+  var lon=Lm
+    +0.10976*Math.sin(M)
+    +0.02224*Math.sin(2*M)
+    -0.00892*Math.sin(Ms)
+    +0.00684*Math.sin(2*D-M)
+    -0.00593*Math.sin(2*D)
+    +0.00174*Math.sin(2*D-2*M)
+    +0.00117*Math.sin(2*D+M);
+  // Oblicuidad de la eclíptica
+  var eps=(23.439291111-0.013004167*T)*Math.PI/180;
+  // Ascensión recta de la Luna (RA) en horas
+  var RA=Math.atan2(Math.sin(lon)*Math.cos(eps),Math.cos(lon))*12/Math.PI;
+  if(RA<0)RA+=24;
+  // Tiempo sidéreo local (horas) — hora UTC actual
+  var UTh=now.getUTCHours()+now.getUTCMinutes()/60+now.getUTCSeconds()/3600;
+  var T0=6.697374558+2400.0513369*T+0.0000258*T*T;
+  var GMST=(T0+UTh*1.0027379093)%24;
+  if(GMST<0)GMST+=24;
+  var LMST=(GMST+lng/15+24)%24;
+  // Ángulo horario de la Luna (hora en que la Luna cruza el meridiano = 0)
+  var HA=(LMST-RA+24)%24; // horas desde tránsito
+  // Hora del próximo tránsito lunar (período mayor 1) — luna en el meridiano
+  var m1h=(24-HA)%24;            // horas hasta próximo tránsito superior
+  var m2h=(m1h+12.421)%24;       // tránsito inferior (antimeridiano)
+  var n1h=(m1h+6.211)%24;        // período menor 1 (cuadratura)
+  var n2h=(m1h+18.632)%24;       // período menor 2
+  var fmt=function(x){
+    x=((x%24)+24)%24;
+    var hh=Math.floor(x),mm=Math.round((x-hh)*60);
+    if(mm===60){hh++;mm=0;}
+    return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+  };
+  return{m1:fmt(m1h),m2:fmt(m2h),n1:fmt(n1h),n2:fmt(n2h),m1h:m1h,m2h:m2h,n1h:n1h,n2h:n2h};
+}
 function actualizarSolunares(lat,lng){
   var sol=calcularSolunares(lat,lng);
   document.getElementById('sol-m1').textContent=sol.m1;document.getElementById('sol-m2').textContent=sol.m2;document.getElementById('sol-n1').textContent=sol.n1;document.getElementById('sol-n2').textContent=sol.n2;
@@ -843,30 +898,25 @@ function iniciarReloj(){
 
 async function renderTideChart(){
   var ctx=document.getElementById('tide-chart');if(!ctx)return;
-  // Obtener mareas reales de Open-Meteo
   var lb=[],dt=[];
   try{
     var r=await fetch('https://marine-api.open-meteo.com/v1/marine?latitude='+curLat+'&longitude='+curLng
       +'&hourly=wave_height&timezone=America%2FSantiago&forecast_days=1');
     var d=await r.json();
-    var horas=d.hourly&&d.hourly.time?d.hourly.time:[];
     var alturas=d.hourly&&d.hourly.wave_height?d.hourly.wave_height:[];
     for(var i=0;i<24;i++){
-      var h=horas[i]?horas[i].split('T')[1].substring(0,5):String(i).padStart(2,'0')+':00';
-      lb.push(h);
-      dt.push(alturas[i]!==null&&alturas[i]!==undefined?+alturas[i].toFixed(2):null);
+      // Eje X: mostrar hora solo cada 3h, vacío el resto
+      lb.push(i%3===0?String(i).padStart(2,'0')+':00':'');
+      dt.push(alturas[i]!=null?+alturas[i].toFixed(2):null);
     }
   }catch(e){
-    // Fallback: curva senoidal con horas reales
-    var ahora=new Date();
-    var offsetH=ahora.getHours();
+    var offsetH=new Date().getHours();
     for(var i=0;i<24;i++){
-      lb.push(String(i).padStart(2,'0')+':00');
+      lb.push(i%3===0?String(i).padStart(2,'0')+':00':'');
       dt.push(+(0.9+0.85*Math.sin(((i+offsetH)/12.4)*2*Math.PI)+0.12*Math.sin(((i+offsetH)/6)*2*Math.PI)).toFixed(2));
     }
   }
   if(tideChartInst)tideChartInst.destroy();
-  // Marcar hora actual
   var ahoraH=new Date().getHours();
   tideChartInst=new Chart(ctx.getContext('2d'),{
     type:'line',
@@ -876,22 +926,43 @@ async function renderTideChart(){
         data:dt,fill:true,
         borderColor:'#38bdf8',borderWidth:2,
         backgroundColor:'rgba(56,189,248,.08)',
-        tension:0.4,pointRadius:0,
-        segment:{borderColor:function(ctx2){return ctx2.p0DataIndex<ahoraH?'rgba(56,189,248,.4)':'#38bdf8';}}
+        tension:0.4,pointRadius:0
       }]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:false},
-        annotation:{annotations:{lineaHora:{type:'line',x:ahoraH,borderColor:'#f5a623',borderWidth:1.5,borderDash:[4,3]}}}
-      },
+      plugins:{legend:{display:false}},
       scales:{
-        x:{ticks:{color:'rgba(255,255,255,.4)',font:{size:9},maxTicksLimit:8,callback:function(val,idx){return idx%3===0?lb[idx]:''}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'}},
-        y:{ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:function(v){return v+'m';}},grid:{color:'rgba(255,255,255,.04)'},border:{color:'rgba(255,255,255,.07)'},min:0}
+        x:{
+          ticks:{
+            color:'rgba(255,255,255,.5)',
+            font:{size:9},
+            // Mostrar solo los labels no vacíos
+            callback:function(val,idx){return lb[idx]||'';}
+          },
+          grid:{color:'rgba(255,255,255,.04)'},
+          border:{color:'rgba(255,255,255,.07)'}
+        },
+        y:{
+          ticks:{color:'rgba(255,255,255,.3)',font:{size:9},callback:function(v){return v+'m';}},
+          grid:{color:'rgba(255,255,255,.04)'},
+          border:{color:'rgba(255,255,255,.07)'},
+          min:0
+        }
       }
     }
   });
+  // Línea vertical hora actual
+  var canvas=ctx;
+  var chartW=canvas.offsetWidth,chartH=canvas.offsetHeight;
+  var xPos=Math.round((ahoraH/23)*chartW);
+  var existLine=canvas.parentElement.querySelector('._hora_line');
+  if(existLine)existLine.remove();
+  var lineDiv=document.createElement('div');
+  lineDiv.className='_hora_line';
+  lineDiv.style.cssText='position:absolute;top:9px;left:'+(xPos+9)+'px;width:1px;height:'+(chartH-18)+'px;background:rgba(245,166,35,.6);pointer-events:none;z-index:10;';
+  canvas.parentElement.style.position='relative';
+  canvas.parentElement.appendChild(lineDiv);
 }
 
 async function renderTideList(){
