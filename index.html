@@ -530,8 +530,11 @@ async function cargarWx(lat,lng){
       // Olas: current para hoy (valor real), daily max para días futuros
       c7.olas.push(i===0?(mc.wave_height||dd.wave_height_max&&dd.wave_height_max[0]||0.8):((dd.wave_height_max&&dd.wave_height_max[i])||0.8));
       // Viento: current para hoy (NO el máximo — eso infla el valor), daily max para futuros
-      var vHoy=wc.wind_speed_10m||14;
-      c7.vientos.push(i===0?vHoy:((da.wind_speed_10m_max&&da.wind_speed_10m_max[i])||14));
+      // Open-Meteo wind_speed_10m ya viene en km/h — validar rango razonable (1-120 km/h)
+      var vRaw=wc.wind_speed_10m;
+      var vHoy=(vRaw!=null&&vRaw>=0&&vRaw<=120)?vRaw:14;
+      var vDia=(da.wind_speed_10m_max&&da.wind_speed_10m_max[i]!=null&&da.wind_speed_10m_max[i]>=0&&da.wind_speed_10m_max[i]<=120)?da.wind_speed_10m_max[i]:vHoy;
+      c7.vientos.push(i===0?vHoy:vDia);
       c7.dirs.push(i===0?(wc.wind_direction_10m||225):((da.wind_direction_10m_dominant&&da.wind_direction_10m_dominant[i])||225));
       c7.pres.push(i===0?(wc.surface_pressure||1013):((da.surface_pressure_mean&&da.surface_pressure_mean[i])||1013));
     }
@@ -674,18 +677,23 @@ async function cargarProfundidad(lat,lng){
     if(z!==null){
       if(z>=20){prof=0;}
       else if(z>-20){var mp=_modeloProf(Math.max(1,distM),lat);prof=Math.max(0.3,mp.prof)+marea;fuente='orilla/'+mp.zona;}
-      else{var profEtopo=Math.abs(z)+marea;if(distM<1500){var techo=_modeloProf(distM+225,lat).prof+marea;prof=Math.min(profEtopo,techo);fuente+='/techo';}else{prof=profEtopo;}}
+      else{var profEtopo=Math.abs(z)+marea;
+        // Techo solo para puntos MUY cerca de la orilla (<400m) para evitar artefactos de tierra
+        if(distM<400){var techo=_modeloProf(distM+100,lat).prof+marea;prof=Math.min(profEtopo,techo);fuente+='/techo';}
+        else{prof=profEtopo;}
+      }
     }else{var mp2=_modeloProf(Math.max(1,distM),lat);prof=mp2.prof+marea;fuente='modelo/'+mp2.zona;}
   }catch(e){var mp3=_modeloProf(Math.max(1,distM),lat);prof=mp3.prof+marea;fuente='modelo';}
   var pCol,txt,consejo;
   if(prof<0.5){pCol='#f87171';txt='Tierra / Seco';consejo='Mueve el marcador al agua.';}
-  else if(prof<1.5){pCol='#fbbf24';txt='Intermareal';consejo='Rompiente activa.';}
-  else if(prof<4){pCol='#4ade80';txt='Rompiente / Poza';consejo='Ideal corvina, róbalo. Plomo 60-80g.';}
-  else if(prof<8){pCol='#f5a623';txt='Veril interior';consejo='Lenguado, pintacha. Plomo 80-100g.';}
-  else if(prof<15){pCol='#f5a623';txt='Veril / Canaleta';consejo='Corvina grande, jurel. Plomo 100-120g.';}
-  else if(prof<35){pCol='#38bdf8';txt='Canal profundo';consejo='Congrio, merluza. Plomo 150g+.';}
-  else if(prof<80){pCol='#818cf8';txt='Plataforma';consejo='Pesca embarcada.';}
-  else{pCol='#c084fc';txt='Offshore';consejo='Aguas profundas.';}
+  else if(prof<1.5){pCol='#fbbf24';txt='Intermareal';consejo='Rompiente activa. Poca agua.';}
+  else if(prof<3){pCol='#4ade80';txt='Rompiente / Orilla';consejo='Ideal róbalo, corvina juvenil. Plomo 40-60g.';}
+  else if(prof<6){pCol='#4ade80';txt='Poza / Zona de pesca';consejo='Corvina, róbalo, lenguado. Plomo 60-80g.';}
+  else if(prof<10){pCol='#f5a623';txt='Veril interior';consejo='Lenguado, pintacha, pejeperro. Plomo 80-100g.';}
+  else if(prof<18){pCol='#f5a623';txt='Canaleta / Veril';consejo='Corvina grande, jurel, sierra. Plomo 100-120g.';}
+  else if(prof<35){pCol='#38bdf8';txt='Canal profundo';consejo='Congrio colorado, merluza. Plomo 150g+.';}
+  else if(prof<80){pCol='#818cf8';txt='Plataforma continental';consejo='Pesca embarcada recomendada.';}
+  else{pCol='#c084fc';txt='Offshore';consejo='Aguas profundas. Embarcación.';}
   sv('d-prof',prof<0.5?'--':prof.toFixed(1)+' m',prof<0.5?'r':prof<5?'g':prof<15?'w':'');
   if(tipoEl){tipoEl.innerHTML='<span style="color:'+pCol+'">'+txt+'</span> <span style="opacity:.4;font-size:9px;">['+fuente.split('/')[0]+']</span><br><span style="color:rgba(255,255,255,.45);font-size:9px;">'+consejo+'</span>';tipoEl.style.color='';}
 
